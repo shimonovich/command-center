@@ -171,16 +171,10 @@
       <div id="emSubject" class="post-title"></div>
       <div id="emMeta" class="post-sub" style="margin-bottom:8px;"></div>
       <div id="emBody" class="post-body" style="background:#0a0c0f;padding:10px;border-radius:12px;max-height:200px;overflow-y:auto;border:1px solid var(--border);margin-bottom:10px;"></div>
-      <label>שיוך לקטגוריה (תווית Gmail)
-        <div style="display:flex;gap:6px;margin-top:4px;">
-          <select id="emCatSelect" style="margin:0;flex:1;">
-            <option value="עבודה">עבודה</option>
-            <option value="ממסי">ממסי (שיש ומדרגות)</option>
-            <option value="יזמות חולון">יזמות חולון</option>
-            <option value="אישי">אישי</option>
-            <option value="לטיפול">לטיפול דחוף</option>
-            <option value="המתנה">בהמתנה</option>
-          </select>
+      <label>שיוך לקטגוריה (מתוך תוויות Gmail הקיימות שלך)
+        <input id="emCatFilter" placeholder="חפש תווית קיימת (למשל אשראל, עבודה, אישי) או הקלד חדשה..." oninput="renderEmailLabelOptions()" style="margin-top:4px;margin-bottom:6px;">
+        <div style="display:flex;gap:6px;">
+          <select id="emCatSelect" style="margin:0;flex:1;"></select>
           <button class="btn btn-blue" onclick="applyEmailCategory()">שייך</button>
         </div>
       </label>
@@ -255,10 +249,13 @@
       <div class="chips">
         <div class="chip active" onclick="filterMail('in:inbox', this)">דואר נכנס</div>
         <div class="chip" onclick="filterMail('in:inbox is:unread', this)">לא נקראו</div>
-        <div class="chip" onclick="filterMail('label:עבודה OR label:ממסי', this)">עבודה / ממסי</div>
-        <div class="chip" onclick="filterMail('label:אישי', this)">אישי</div>
-        <div class="chip" onclick="filterMail('label:לטיפול', this)">לטיפול</div>
+        <div class="chip" onclick="filterMail('label:\"עבודה\"', this)">עבודה</div>
+        <div class="chip" onclick="filterMail('label:\"אשראל\"', this)">אשראל</div>
+        <div class="chip" onclick="filterMail('label:\"אישי\"', this)">אישי</div>
       </div>
+      <select id="mailLabelFilter" onchange="filterMailByDropdown(this.value)" style="margin:0 0 10px 0;">
+        <option value="">📂 סנן לפי כל תווית קיימת ב-Gmail...</option>
+      </select>
       <div id="mailList"><div class="empty">טוען מיילים מ-Gmail...</div></div>
     </section>
 
@@ -366,7 +363,7 @@
       callServer('getAppBootstrap', [PIN]).then(data => {
         if (data && data.locked) { openModal('setupModal'); return toast('נדרש קוד גישה'); }
         STATE = data;
-        renderStories(); renderBriefing(); renderHome(); renderApprovals(); renderContacts(STATE.contacts || []); renderIdeas(); renderChat(); renderSettings();
+        renderStories(); renderBriefing(); renderHome(); renderApprovals(); renderContacts(STATE.contacts || []); renderEmailLabelOptions(); renderMailFilterDropdown(); renderIdeas(); renderChat(); renderSettings();
       }).catch(e => toast('שגיאה: ' + e.message));
     }
 
@@ -513,6 +510,8 @@
       document.getElementById('emMeta').textContent = ACTIVE_EMAIL.senderName + ' (' + ACTIVE_EMAIL.senderEmail + ') • ' + ACTIVE_EMAIL.date;
       document.getElementById('emBody').textContent = ACTIVE_EMAIL.body;
       document.getElementById('emReplyText').value = ACTIVE_EMAIL.draftReply || '';
+      document.getElementById('emCatFilter').value = '';
+      renderEmailLabelOptions();
       openModal('emailModal');
     }
 
@@ -543,11 +542,48 @@
       }).catch(e => toast(e.message));
     }
 
+    function renderEmailLabelOptions() {
+      const sel = document.getElementById('emCatSelect');
+      if (!sel) return;
+      const all = (STATE && STATE.gmailLabels) ? STATE.gmailLabels : [];
+      const q = (document.getElementById('emCatFilter') ? document.getElementById('emCatFilter').value : '').trim();
+      const qLow = q.toLowerCase();
+      const filtered = q ? all.filter(l => l.toLowerCase().indexOf(qLow) !== -1) : all;
+      let html = filtered.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
+      if (q && !all.some(l => l.toLowerCase() === qLow)) {
+        html += `<option value="${esc(q)}">+ צור תווית חדשה: ${esc(q)}</option>`;
+      }
+      if (!html) html = '<option value="">לא נמצאו תוויות — הקלד שם ליצירה</option>';
+      sel.innerHTML = html;
+    }
+
+    function renderMailFilterDropdown() {
+      const sel = document.getElementById('mailLabelFilter');
+      if (!sel) return;
+      const all = (STATE && STATE.gmailLabels) ? STATE.gmailLabels : [];
+      sel.innerHTML = '<option value="">📂 סנן לפי כל תווית קיימת ב-Gmail (' + all.length + ')...</option>' +
+        all.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
+    }
+
+    function filterMailByDropdown(lbl) {
+      if (!lbl) return;
+      MAIL_QUERY = 'label:"' + lbl.replace(/"/g, '') + '"';
+      document.querySelectorAll('#tab-mail .chip').forEach(c => c.classList.remove('active'));
+      document.getElementById('mailSearch').value = '';
+      loadEmails();
+    }
+
     function applyEmailCategory() {
       if (!ACTIVE_EMAIL) return;
-      const cat = document.getElementById('emCatSelect').value;
+      const cat = (document.getElementById('emCatSelect').value || document.getElementById('emCatFilter').value || '').trim();
+      if (!cat) return toast('בחר או הקלד שם תווית');
       toast('משייך לקטגוריה...');
-      callServer('apiCategorizeEmail', [PIN, ACTIVE_EMAIL.threadId, cat]).then(() => {
+      callServer('apiCategorizeEmail', [PIN, ACTIVE_EMAIL.threadId, cat]).then(res => {
+        if (res && res.allLabels && STATE) {
+          STATE.gmailLabels = res.allLabels;
+          renderEmailLabelOptions();
+          renderMailFilterDropdown();
+        }
         toast('שויך ל-' + cat); loadEmails();
       }).catch(e => toast(e.message));
     }
