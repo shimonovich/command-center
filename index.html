@@ -122,7 +122,7 @@
   <header>
     <div class="brand">
       <div class="brand-logo">א</div>
-      <h1 id="pageTitle">חדר פיקוד</h1>
+      <div><h1 id="pageTitle">חדר פיקוד</h1><div id="syncNote" style="font-size:10.5px;color:var(--muted);"></div></div>
     </div>
     <div class="hdr-actions">
       <button class="icon-btn primary" title="משימה חדשה" onclick="openModal('addTaskModal')">＋</button>
@@ -188,6 +188,25 @@
         <button class="btn" onclick="archiveActiveEmail()">📥 ארכיון</button>
         <button class="btn btn-err" onclick="deleteActiveEmail()">🗑️ מחק</button>
         <button class="btn" onclick="closeModal('emailModal')">סגור</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WhatsApp Reply Modal -->
+  <div id="waReplyModal" class="modal hidden">
+    <div class="modal-sheet">
+      <div id="waTitle" class="post-title">💬 תשובה בוואטסאפ</div>
+      <div id="waContext" class="post-body" style="background:#0a0c0f;padding:9px;border-radius:12px;max-height:140px;overflow-y:auto;border:1px solid var(--border);margin-bottom:8px;font-size:12.5px;color:var(--muted);"></div>
+      <label>מספר טלפון (נשלף אוטומטית — אם ריק הזן פעם אחת ויישמר)
+        <input id="waPhone" placeholder="לדוגמה: 0501234567 או 972501234567" dir="ltr">
+      </label>
+      <label>תוכן התשובה
+        <textarea id="waText" placeholder="כתוב תגובה או לחץ 'נסח עם AI'..." style="min-height:95px;"></textarea>
+      </label>
+      <div class="action-bar">
+        <button class="btn btn-grad" onclick="draftWaWithAi()">✨ נסח עם AI</button>
+        <button class="btn btn-ok" onclick="sendWaReply()">📲 פתח ושלח בוואטסאפ</button>
+        <button class="btn" onclick="closeModal('waReplyModal')">סגור</button>
       </div>
     </div>
   </div>
@@ -358,13 +377,37 @@
       closeModal('setupModal'); loadAll();
     }
 
+    let ACTIVE_WA = null;
+
+    function renderAllFromState() {
+      if (!STATE) return;
+      renderStories(); renderBriefing(); renderHome(); renderApprovals();
+      renderContacts(STATE.contacts || []); renderEmailLabelOptions();
+      renderMailFilterDropdown(); renderIdeas(); renderChat(); renderSettings();
+    }
+
+    function hydrateCachedState() {
+      try {
+        const raw = localStorage.getItem('cc_state_cache_v4');
+        if (raw) { STATE = JSON.parse(raw); renderAllFromState(); }
+      } catch (e) {}
+    }
+
+    function setSyncNote(txt) {
+      const el = document.getElementById('syncNote');
+      if (el) el.textContent = txt || '';
+    }
+
     function loadAll() {
       if (!IS_GAS && !GAS_URL) { openModal('setupModal'); return; }
+      setSyncNote('מסנכרן...');
       callServer('getAppBootstrap', [PIN]).then(data => {
-        if (data && data.locked) { openModal('setupModal'); return toast('נדרש קוד גישה'); }
+        if (data && data.locked) { setSyncNote(''); openModal('setupModal'); return toast('נדרש קוד גישה'); }
         STATE = data;
-        renderStories(); renderBriefing(); renderHome(); renderApprovals(); renderContacts(STATE.contacts || []); renderEmailLabelOptions(); renderMailFilterDropdown(); renderIdeas(); renderChat(); renderSettings();
-      }).catch(e => toast('שגיאה: ' + e.message));
+        try { localStorage.setItem('cc_state_cache_v4', JSON.stringify(data)); } catch (e) {}
+        renderAllFromState();
+        setSyncNote(data.serverVersion ? ('מעודכן • v' + data.serverVersion) : '⚠️ נדרשת פריסת גרסה חדשה ב-Apps Script');
+      }).catch(e => { setSyncNote('שגיאת חיבור'); toast('שגיאה: ' + e.message); });
     }
 
     function renderStories() {
@@ -424,6 +467,9 @@
             </div>
           </div>
           <div class="post-body">${esc(h.summary)}</div>
+          <div class="action-bar">
+            <button class="btn btn-ok" onclick="openWaReplyFromFeed('${esc(h.id)}')">💬 ענה בוואטסאפ</button>
+          </div>
         </div>`).join('') : '<div class="empty">אין עדיין רשומות בפיד</div>';
         return;
       }
@@ -453,13 +499,28 @@
             ${done ? `<button class="btn" onclick="setTaskStatus('${esc(t.id)}','פתוח')">↩️ החזר</button>`
                    : `<button class="btn btn-ok" onclick="setTaskStatus('${esc(t.id)}','בוצע')">✓ בוצע</button>`}
             ${!t.calEventId ? `<button class="btn" onclick="addCal('${esc(t.id)}')">📅 ליומן</button>` : '<span class="pill p-ok">ביומן ✓</span>'}
+            ${t.contact && t.contact !== 'ידני' ? `<button class="btn" onclick="openWaReplyFromTask('${esc(t.id)}')">💬 וואטסאפ</button>` : ''}
           </div>
         </div>`;
       }).join('') : '<div class="empty">אין משימות בתצוגה זו</div>';
     }
 
-    function setTaskStatus(id, st) { toast('מעדכן...'); callServer('apiUpdateTaskStatus', [PIN, id, st]).then(() => { toast('עודכן'); loadAll(); }).catch(e => toast(e.message)); }
-    function addCal(id) { toast('מוסיף ליומן...'); callServer('apiAddTaskToCalendar', [PIN, id]).then(() => { toast('נוסף ליומן Google!'); loadAll(); }).catch(e => toast(e.message)); }
+    function setTaskStatus(id, st) {
+      const item = (STATE && STATE.tasks || []).find(t => t.id === id);
+      if (item) { item.status = st; renderHome(); renderStories(); }
+      toast('עודכן ✓');
+      callServer('apiUpdateTaskStatus', [PIN, id, st]).then(() => {
+        try { localStorage.setItem('cc_state_cache_v4', JSON.stringify(STATE)); } catch (e) {}
+      }).catch(e => { toast('שגיאה: ' + e.message); loadAll(); });
+    }
+    function addCal(id) {
+      toast('מוסיף ליומן...');
+      callServer('apiAddTaskToCalendar', [PIN, id]).then(() => {
+        const item = (STATE && STATE.tasks || []).find(t => t.id === id);
+        if (item) { item.calEventId = 'ok'; renderHome(); }
+        toast('נוסף ליומן Google!');
+      }).catch(e => toast(e.message));
+    }
     function saveNewTask() {
       const title = document.getElementById('ntTitle').value.trim();
       if (!title) return toast('יש להזין כותרת');
@@ -482,8 +543,17 @@
     function loadEmails() {
       const customQ = document.getElementById('mailSearch').value.trim();
       document.getElementById('mailList').innerHTML = '<div class="empty">טוען מיילים מ-Gmail...</div>';
-      callServer('apiGetEmails', [PIN, customQ || MAIL_QUERY, 20]).then(list => {
-        EMAILS = list || [];
+      callServer('apiGetEmails', [PIN, customQ || MAIL_QUERY, 12]).then(res => {
+        if (Array.isArray(res)) {
+          EMAILS = res;
+        } else {
+          EMAILS = (res && res.emails) ? res.emails : [];
+          if (res && res.allLabels && res.allLabels.length && STATE) {
+            STATE.gmailLabels = res.allLabels;
+            renderEmailLabelOptions();
+            renderMailFilterDropdown();
+          }
+        }
         renderEmails();
       }).catch(e => toast('שגיאת מייל: ' + e.message));
     }
@@ -512,6 +582,11 @@
       document.getElementById('emReplyText').value = ACTIVE_EMAIL.draftReply || '';
       document.getElementById('emCatFilter').value = '';
       renderEmailLabelOptions();
+      if (!STATE || !STATE.gmailLabels || !STATE.gmailLabels.length) {
+        callServer('apiGetGmailLabels', [PIN, true]).then(lbls => {
+          if (STATE && Array.isArray(lbls)) { STATE.gmailLabels = lbls; renderEmailLabelOptions(); renderMailFilterDropdown(); }
+        }).catch(() => {});
+      }
       openModal('emailModal');
     }
 
@@ -590,12 +665,63 @@
 
     function archiveActiveEmail() {
       if (!ACTIVE_EMAIL) return;
-      callServer('apiArchiveEmail', [PIN, ACTIVE_EMAIL.threadId]).then(() => { closeModal('emailModal'); toast('הועבר לארכיון'); loadEmails(); }).catch(e => toast(e.message));
+      const tid = ACTIVE_EMAIL.threadId;
+      EMAILS = EMAILS.filter(m => m.threadId !== tid);
+      closeModal('emailModal'); renderEmails(); toast('הועבר לארכיון ✓');
+      callServer('apiArchiveEmail', [PIN, tid]).catch(e => { toast(e.message); loadEmails(); });
     }
 
     function deleteActiveEmail() {
       if (!ACTIVE_EMAIL) return;
-      callServer('apiDeleteEmail', [PIN, ACTIVE_EMAIL.threadId]).then(() => { closeModal('emailModal'); toast('המייל נמחק לאשפה'); loadEmails(); }).catch(e => toast(e.message));
+      const tid = ACTIVE_EMAIL.threadId;
+      EMAILS = EMAILS.filter(m => m.threadId !== tid);
+      closeModal('emailModal'); renderEmails(); toast('נמחק לאשפה ✓');
+      callServer('apiDeleteEmail', [PIN, tid]).catch(e => { toast(e.message); loadEmails(); });
+    }
+
+    function openWaReply(contact, channel, summary, category, project) {
+      ACTIVE_WA = { contact: contact || '', channel: channel || 'WhatsApp', summary: summary || '', category: category || 'עבודה', project: project || '' };
+      document.getElementById('waTitle').textContent = '💬 תשובה אל ' + ACTIVE_WA.contact;
+      document.getElementById('waContext').textContent = ACTIVE_WA.summary || '(ללא תקציר)';
+      document.getElementById('waPhone').value = '';
+      document.getElementById('waText').value = '';
+      openModal('waReplyModal');
+      callServer('apiLookupContactPhone', [PIN, ACTIVE_WA.contact]).then(res => {
+        if (res && res.phone) document.getElementById('waPhone').value = res.phone;
+      }).catch(() => {});
+    }
+
+    function openWaReplyFromFeed(id) {
+      const h = (STATE && STATE.history || []).find(x => x.id === id);
+      if (h) openWaReply(h.contact, h.channel, h.summary, h.category, h.project);
+    }
+
+    function openWaReplyFromTask(id) {
+      const t = (STATE && STATE.tasks || []).find(x => x.id === id);
+      if (t) openWaReply(t.contact, t.category === 'עבודה' ? 'WhatsApp Business' : 'WhatsApp אישי', t.title + (t.details ? '\n' + t.details : ''), t.category, t.project);
+    }
+
+    function draftWaWithAi() {
+      if (!ACTIVE_WA) return;
+      toast('מנסח תשובה מותאמת עם AI...');
+      callServer('apiDraftAiWaReply', [PIN, ACTIVE_WA.contact, ACTIVE_WA.channel, ACTIVE_WA.summary]).then(res => {
+        document.getElementById('waText').value = res.draft || '';
+        if (res.phone && !document.getElementById('waPhone').value.trim()) document.getElementById('waPhone').value = res.phone;
+        toast('הטיוטה מוכנה — ערוך או שלח');
+      }).catch(e => toast(e.message));
+    }
+
+    function sendWaReply() {
+      if (!ACTIVE_WA) return;
+      const text = document.getElementById('waText').value.trim();
+      const phone = document.getElementById('waPhone').value.trim();
+      if (!text) return toast('כתוב תשובה לפני השליחה');
+      const cleanPh = phone.replace(/[^\d]/g, '').replace(/^0/, '972');
+      const waUrl = cleanPh ? ('https://wa.me/' + cleanPh + '?text=' + encodeURIComponent(text)) : ('https://wa.me/?text=' + encodeURIComponent(text));
+      window.open(waUrl, '_blank');
+      closeModal('waReplyModal');
+      toast('נפתח בוואטסאפ ותועד בהיסטוריה ✓');
+      callServer('apiLogWaReply', [PIN, ACTIVE_WA.contact, phone, ACTIVE_WA.channel, text, ACTIVE_WA.category, ACTIVE_WA.project]).catch(() => {});
     }
 
     // === APPROVALS & SLA ===
@@ -744,6 +870,7 @@
     }
     function sendEmailNow() { callServer('apiSendDailyEmailNow', [PIN]).then(r => toast(r.message)).catch(e => toast(e.message)); }
 
+    hydrateCachedState();
     loadAll();
   </script>
 </body>
