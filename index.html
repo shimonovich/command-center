@@ -121,6 +121,15 @@
     .sig-box { font-size: 11.5px; color: var(--muted); background: #0a0c0f; border: 1px dashed var(--border); border-radius: 10px; padding: 7px 10px; margin-top: 6px; white-space: pre-wrap; }
     .step-card { background: #0b0e13; border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 8px; }
     .code-badge { background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.3); border-radius: 10px; padding: 7px 10px; font-size: 12px; color: #bae6fd; margin-top: 8px; line-height: 1.4; }
+
+    .mail-focus-frame { width: 100%; height: 52vh; min-height: 300px; border: 1px solid var(--border); border-radius: 12px; background: #ffffff; margin-bottom: 8px; }
+    .file-preview-frame { width: 100%; height: 56vh; min-height: 320px; border: 1px solid var(--border); border-radius: 12px; background: #111; margin: 8px 0; }
+    .compact-cat-bar { display: flex; align-items: center; gap: 6px; padding: 5px 8px; background: #0a0c0f; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
+    .compact-cat-bar select { margin: 0; padding: 5px 8px; font-size: 12px; border: none; background: transparent; flex: 1; }
+    .social-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+    .social-tile { background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 11px 12px; display: flex; align-items: center; gap: 9px; cursor: pointer; color: #fff; text-decoration: none; font-weight: 700; font-size: 13px; }
+    .social-tile:active { transform: scale(0.97); }
+    .social-ic { font-size: 20px; }
   </style>
 </head>
 <body>
@@ -155,6 +164,7 @@
         <button class="btn btn-grad" style="justify-content:center;padding:12px;" onclick="closeModal('quickCreateModal'); openComposeEmailModal();">📧 מייל חדש</button>
         <button class="btn btn-ok" style="justify-content:center;padding:12px;" onclick="closeModal('quickCreateModal'); openBlankMessageDrawer();">💬 הודעה / שיחה</button>
         <button class="btn" style="justify-content:center;padding:12px;" onclick="closeModal('quickCreateModal'); openModal('addIdeaModal');">💡 העלה רעיון</button>
+        <button class="btn" style="justify-content:center;padding:12px;grid-column:span 2;" onclick="closeModal('quickCreateModal'); openSocialHub();">🌐 רשתות חברתיות (פייסבוק, אינסטגרם, לינקדאין, X...)</button>
       </div>
       <div class="action-bar"><button class="btn" onclick="closeModal('quickCreateModal')">סגור</button></div>
     </div>
@@ -346,67 +356,125 @@
     </div>
   </div>
 
-  <!-- Upgraded Email Triage Modal (Auto-Advance + Categorize Leaves Inbox!) -->
+  <!-- High-Focus Rich HTML Email Reader (Auto-Advance, Compact Category Bar, In-App Attachments) -->
   <div id="emailModal" class="modal hidden">
-    <div class="modal-sheet">
-      <div class="triage-bar">
+    <div class="modal-sheet" style="max-height:95vh;padding-top:12px;">
+      <div class="triage-bar" style="margin-bottom:6px;padding-bottom:6px;">
         <span id="emCounter" class="triage-count"></span>
-        <div style="display:flex;gap:6px;">
-          <button class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="stepEmail(-1)">→ הקודם</button>
-          <button class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="stepEmail(1)">הבא ←</button>
-          <button class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="closeModal('emailModal')">✕</button>
+        <div style="display:flex;gap:5px;">
+          <button class="btn" style="padding:4px 9px;font-size:11px;" onclick="stepEmail(-1)">→</button>
+          <button class="btn" style="padding:4px 9px;font-size:11px;" onclick="stepEmail(1)">←</button>
+          <button class="btn" style="padding:4px 9px;font-size:11px;" onclick="closeModal('emailModal')">✕</button>
         </div>
       </div>
 
-      <div id="emSubject" class="card-title"></div>
+      <div id="emSubject" style="font-size:15px;font-weight:800;line-height:1.3;margin-bottom:2px;"></div>
       <div id="emMeta" class="meta-time" style="margin-bottom:4px;"></div>
-      <div id="emCcLine" class="meta-time hidden" style="margin-bottom:6px;"></div>
-
-      <!-- Attachments Strip -->
+      <div id="emCcLine" class="meta-time hidden" style="margin-bottom:4px;"></div>
       <div id="emAttachments" class="att-list hidden"></div>
 
-      <!-- Rich HTML vs Clean Text Toggle -->
-      <div style="display:flex;gap:6px;margin-bottom:6px;">
-        <button id="emViewRichBtn" class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="toggleEmailRichView(true)">🎨 תצוגה מעוצבת (HTML)</button>
-        <button id="emViewTextBtn" class="btn btn-blue" style="padding:4px 10px;font-size:11.5px;" onclick="toggleEmailRichView(false)">📝 טקסט נקי</button>
-      </div>
-      <div id="emBody" style="background:#0a0c0f;padding:11px;border-radius:12px;max-height:220px;overflow-y:auto;border:1px solid var(--border);margin-bottom:10px;font-size:13px;white-space:pre-wrap;line-height:1.5;"></div>
-      <iframe id="emHtmlFrame" class="mail-rich-frame hidden" sandbox="allow-same-origin"></iframe>
+      <!-- Main Focus: Rich Styled HTML Email Canvas -->
+      <iframe id="emHtmlFrame" class="mail-focus-frame" sandbox="allow-same-origin"></iframe>
 
-      <label>📂 שייך לקטגוריה (יוצא מהדואר הנכנס ועובר לבא)
-        <input id="emCatFilter" placeholder="חפש תווית קיימת או הקלד חדשה..." oninput="renderEmailLabelOptions()" style="margin-top:4px;margin-bottom:6px;">
-        <div style="display:flex;gap:6px;">
-          <select id="emCatSelect" style="margin:0;flex:1;"></select>
-          <button class="btn btn-blue" onclick="applyEmailCategory()">שייך ←</button>
+      <!-- Ultra-Compact Single-Line Category Bar -->
+      <div class="compact-cat-bar">
+        <span style="font-size:12px;color:var(--muted);">📂</span>
+        <select id="emCatSelect"></select>
+        <input id="emCatFilter" placeholder="סנן/חדש..." oninput="renderEmailLabelOptions()" style="width:92px;margin:0;padding:4px 7px;font-size:11.5px;border-radius:8px;">
+        <button class="btn btn-blue" style="padding:5px 10px;font-size:11.5px;" onclick="applyEmailCategory()">שייך ←</button>
+      </div>
+
+      <!-- Collapsible Reply Drawer (keeps email clean until you tap Reply!) -->
+      <div id="emReplyDrawer" class="hidden" style="background:#0a0c0f;border:1px solid var(--border);border-radius:12px;padding:9px;margin-bottom:8px;">
+        <textarea id="emReplyText" placeholder="כתוב תגובה..." style="min-height:80px;margin-top:0;"></textarea>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:6px;">
+          <select id="emSigSelect" onchange="updateSigPreview('emSigSelect','emSigPrev')" style="margin:0;padding:6px;font-size:12px;flex:1;">
+            <option value="work">💼 חתימת עבודה</option>
+            <option value="personal">🏠 חתימה אישית</option>
+            <option value="none">ללא חתימה</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:4px;margin:0;font-size:11.5px;white-space:nowrap;">
+            <input id="emReplyAll" type="checkbox" style="width:15px;height:15px;margin:0;"> לכולם
+          </label>
+          <button class="btn btn-ok" style="padding:6px 12px;font-size:12px;" onclick="sendEmailReply()">📨 שלח</button>
+          <button class="btn" style="padding:6px 10px;font-size:12px;" onclick="saveEmailDraft()">💾</button>
         </div>
-      </label>
-
-      <label>תגובה / טיוטה<textarea id="emReplyText" placeholder="כתוב תגובה או לחץ '✨ AI'..."></textarea></label>
-      <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
-        <select id="emSigSelect" onchange="updateSigPreview('emSigSelect','emSigPrev')" style="margin:0;flex:1;">
-          <option value="work">💼 חתימת עבודה</option>
-          <option value="personal">🏠 חתימה אישית</option>
-          <option value="none">ללא חתימה</option>
-        </select>
-        <label style="display:flex;align-items:center;gap:5px;margin:0;white-space:nowrap;font-size:12px;">
-          <input id="emReplyAll" type="checkbox" style="width:16px;height:16px;margin:0;"> השב לכולם
-        </label>
-      </div>
-      <div id="emSigPrev" class="sig-box"></div>
-
-      <!-- Forward Bar (toggleable) -->
-      <div id="emFwdBox" class="hidden" style="margin-top:8px;display:flex;gap:6px;">
-        <input id="emFwdTo" placeholder="העבר לכתובת מייל..." dir="ltr" style="margin:0;flex:1;">
-        <button class="btn btn-blue" onclick="doForwardEmail()">העבר</button>
+        <div id="emSigPrev" class="sig-box"></div>
       </div>
 
-      <div class="action-bar">
-        <button class="btn btn-grad" onclick="draftEmailWithAi()">✨ AI</button>
-        <button class="btn btn-ok" onclick="sendEmailReply()">📨 שלח ←</button>
-        <button class="btn" onclick="saveEmailDraft()">💾 טיוטה</button>
+      <!-- Collapsible Forward Bar -->
+      <div id="emFwdBox" class="hidden" style="display:flex;gap:6px;margin-bottom:8px;">
+        <input id="emFwdTo" placeholder="העבר לכתובת מייל..." dir="ltr" style="margin:0;flex:1;padding:7px 10px;font-size:13px;">
+        <button class="btn btn-blue" style="padding:6px 12px;font-size:12px;" onclick="doForwardEmail()">העבר</button>
+      </div>
+
+      <!-- Compact Action Bar -->
+      <div class="action-bar" style="margin-top:4px;padding-top:7px;">
+        <button class="btn btn-blue" onclick="toggleEmailReplyDrawer(true)">↩️ השב</button>
+        <button class="btn btn-grad" onclick="toggleEmailReplyDrawer(true); draftEmailWithAi();">✨ השב AI</button>
         <button class="btn" onclick="document.getElementById('emFwdBox').classList.toggle('hidden')">↪️ העבר</button>
-        <button class="btn" onclick="archiveActiveEmail()">📥 ארכיון ←</button>
-        <button class="btn btn-err" onclick="deleteActiveEmail()">🗑️ מחק ←</button>
+        <button class="btn" onclick="archiveActiveEmail()">📥</button>
+        <button class="btn btn-err" onclick="deleteActiveEmail()">🗑️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-App Google Drive File Viewer Modal (PDF, Images, Docs, Sheets, Attachments INSIDE the app!) -->
+  <div id="fileViewerModal" class="modal hidden">
+    <div class="modal-sheet" style="max-height:95vh;">
+      <div class="triage-bar" style="margin-bottom:6px;">
+        <div id="fvTitle" class="card-title" style="margin:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📄 צפייה בקובץ</div>
+        <button class="btn" style="padding:4px 10px;font-size:12px;" onclick="closeModal('fileViewerModal')">✕</button>
+      </div>
+      <div id="fvSummaryBox" class="code-badge hidden" style="margin-top:0;margin-bottom:6px;white-space:pre-wrap;"></div>
+      <div id="fvInstrBox" class="prof-item highlight hidden" style="margin-bottom:6px;">
+        <div class="prof-lbl">🧭 הוראות ביצוע (AI)</div>
+        <div id="fvInstrVal" class="prof-val" style="white-space:pre-wrap;"></div>
+      </div>
+      <iframe id="fvFrame" class="file-preview-frame" allow="autoplay"></iframe>
+      <div class="action-bar">
+        <button class="btn btn-blue" onclick="openFvExternal()">🔗 פתח ב-Google Drive / Docs</button>
+        <button class="btn" onclick="closeModal('fileViewerModal')">סגור</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Confirmation Modal (Prevents accidental guest invites!) -->
+  <div id="calConfirmModal" class="modal hidden">
+    <div class="modal-sheet">
+      <div class="card-title">📅 הוספה ליומן Google</div>
+      <div id="ccTaskName" class="meta-time" style="margin-bottom:10px;"></div>
+      <div class="action-bar">
+        <button class="btn btn-blue" onclick="confirmAddCal(false)">📅 יומן אישי בלבד (ללא זימון אורח)</button>
+        <button class="btn btn-ok" onclick="confirmAddCal(true)">📨 הוסף ליומן + שלח זימון למשתתף</button>
+        <button class="btn" onclick="closeModal('calConfirmModal')">ביטול</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social Networks Hub Modal (Facebook, Instagram, Messenger, X, LinkedIn, TikTok, Telegram, YouTube + AI Composer) -->
+  <div id="socialHubModal" class="modal hidden">
+    <div class="modal-sheet">
+      <div class="triage-bar">
+        <span class="card-title" style="margin:0;">🌐 גישה מהירה לרשתות חברתיות</span>
+        <button class="btn" style="padding:4px 10px;" onclick="closeModal('socialHubModal')">✕</button>
+      </div>
+      <div class="social-grid" id="socialLinksGrid"></div>
+      <div style="background:#0a0c0f;border:1px solid var(--border);border-radius:14px;padding:10px;">
+        <div style="font-size:12.5px;font-weight:800;color:var(--blue);margin-bottom:6px;">✨ ניסוח פוסט / תגובה עם AI לכל רשת</div>
+        <select id="socNetSel" style="margin-top:0;">
+          <option value="Facebook">📘 Facebook</option>
+          <option value="Instagram">📸 Instagram</option>
+          <option value="LinkedIn">💼 LinkedIn</option>
+          <option value="X">𝕏 X (Twitter)</option>
+          <option value="TikTok">🎵 TikTok</option>
+          <option value="Telegram">✈️ Telegram</option>
+        </select>
+        <textarea id="socPrompt" placeholder="על מה לכתוב? (פוסט, תגובה, הצעה עסקית...)" style="min-height:64px;"></textarea>
+        <div class="action-bar" style="margin-top:8px;">
+          <button class="btn btn-grad" onclick="draftSocialWithAi()">✨ נסח</button>
+          <button class="btn btn-ok" onclick="copyAndOpenSocial()">📋 העתק ופתח רשת</button>
+        </div>
       </div>
     </div>
   </div>
@@ -435,6 +503,7 @@
         <button class="btn" onclick="runSheetCmds()">📋 הרץ פקודות Sheets</button>
         <button class="btn" onclick="processCallsNow()">📞 עבד שיחות חדשות</button>
         <button class="btn" onclick="processDownloadsNow()">📂 סרוק תיקיית הורדות</button>
+        <button class="btn" onclick="resetModelBlocksNow()">🤖 אפס חסימת מודלים</button>
         <button class="btn btn-err" onclick="hardResetCache()">🔄 נקה מטמון</button>
         <button class="btn" onclick="closeModal('settingsModal')">סגור</button>
       </div>
@@ -460,6 +529,7 @@
         <div class="chip" onclick="setHomeView('feed', this)">📞 שיחות/וואטסאפ</div>
         <div class="chip" onclick="setHomeView('waiting', this)">⏳ ממתין לאחרים</div>
         <div class="chip" onclick="setHomeView('downloads', this)">📂 הורדות וקבצים</div>
+        <div class="chip" onclick="openSocialHub()">🌐 רשתות</div>
         <div class="chip" onclick="setHomeView('done', this)">✓ הושלמו</div>
       </div>
 
@@ -711,7 +781,7 @@
       box.innerHTML = dlHeader + list.map((it, idx) => {
         const avCls = it.kind === 'mail' ? 'av-mail' : (it.isOther || it.kind === 'followup' ? 'av-wait' : (it.category === 'עבודה' ? 'av-work' : 'av-pers'));
         const actorCls = it.kind === 'mail' ? 'p-mail' : (it.isOther || it.kind === 'followup' || it.kind === 'approval' ? 'p-other' : 'p-me');
-        const onCardClick = it.kind === 'mail' ? `openEmail(${it.mailIdx})` : (it.kind === 'download' ? `openDownloadUrl('${esc(it.raw.url)}')` : `openUnifiedItem(${idx})`);
+        const onCardClick = it.kind === 'mail' ? `openEmail(${it.mailIdx})` : (it.kind === 'download' ? `openDownloadInApp('${esc(it.id)}')` : `openUnifiedItem(${idx})`);
         const quickBtn = it.kind === 'task' && !it.done
           ? `<button class="quick-done" title="סמן בוצע" onclick="event.stopPropagation(); quickDoneTask('${esc(it.id)}')">✓</button>`
           : (it.kind === 'feed'
@@ -922,12 +992,21 @@
       callServer('apiLogWaReply', [PIN, contact, phone, chLbl, text, it && it.category, it && it.raw && it.raw.project, LAST_GEO]).catch(() => {});
     }
 
+    let CAL_PENDING_TASK = null;
     function openCalWithGuest() {
       const it = ACTION_LIST[ACTION_IDX]; if (!it || it.kind !== 'task') return;
-      toast('יוצר אירוע ומצרף אורח...');
-      callServer('apiAddTaskToCalendar', [PIN, it.id, LAST_GEO]).then(res => {
+      CAL_PENDING_TASK = it;
+      document.getElementById('ccTaskName').textContent = it.title + (it.author ? (' • ' + it.author) : '');
+      openModal('calConfirmModal');
+    }
+    function confirmAddCal(inviteGuest) {
+      if (!CAL_PENDING_TASK) return;
+      const it = CAL_PENDING_TASK;
+      closeModal('calConfirmModal');
+      toast(inviteGuest ? 'יוצר אירוע ושולח זימון...' : 'מוסיף ליומן האישי שלך בלבד...');
+      callServer('apiAddTaskToCalendar', [PIN, it.id, LAST_GEO, !!inviteGuest]).then(res => {
         if (it.raw) it.raw.calEventId = 'ok';
-        toast(res.invitedEmail ? ('נוצר ביומן עם הזמנה ל-' + res.invitedEmail) : 'נוצר ביומן — נפתח להשלמת פרטים');
+        toast(inviteGuest && res.invitedEmail ? ('נשלח זימון ל-' + res.invitedEmail + ' ✓') : 'נוסף ליומן האישי ✓');
         if (res && res.calUrl) window.open(res.calUrl, '_blank');
       }).catch(e => toast(e.message));
     }
@@ -1098,10 +1177,10 @@
         attBox.classList.remove('hidden');
       } else { attBox.innerHTML = ''; attBox.classList.add('hidden'); }
 
-      document.getElementById('emBody').textContent = m.body;
-      toggleEmailRichView(false);
+      renderEmailRichFrame(m);
       document.getElementById('emReplyText').value = m.draftReply || '';
       document.getElementById('emReplyAll').checked = false;
+      document.getElementById('emReplyDrawer').classList.add('hidden');
       document.getElementById('emFwdBox').classList.add('hidden');
       document.getElementById('emCatFilter').value = '';
       updateSigPreview('emSigSelect', 'emSigPrev');
@@ -1265,25 +1344,89 @@ ${esc(i.planSummary)}</div>` : ''}
       callServer('apiProcessDownloadsNow', [PIN]).then(r => { toast((r && r.message) || 'הושלם'); loadAll(); }).catch(e => toast(e.message));
     }
 
-    function toggleEmailRichView(showRich) {
-      const m = EMAILS[EMAIL_IDX];
-      document.getElementById('emBody').classList.toggle('hidden', showRich);
+    let ACTIVE_FV_URL = '';
+    const SOCIAL_NETS = [
+      { id: 'Facebook', ic: '📘', name: 'Facebook', url: 'https://m.facebook.com/' },
+      { id: 'Messenger', ic: '💬', name: 'Messenger', url: 'https://www.messenger.com/' },
+      { id: 'Instagram', ic: '📸', name: 'Instagram', url: 'https://www.instagram.com/direct/inbox/' },
+      { id: 'LinkedIn', ic: '💼', name: 'LinkedIn', url: 'https://www.linkedin.com/messaging/' },
+      { id: 'X', ic: '𝕏', name: 'X / Twitter', url: 'https://x.com/home' },
+      { id: 'TikTok', ic: '🎵', name: 'TikTok', url: 'https://www.tiktok.com/' },
+      { id: 'Telegram', ic: '✈️', name: 'Telegram', url: 'https://web.telegram.org/' },
+      { id: 'YouTube', ic: '▶️', name: 'YouTube', url: 'https://m.youtube.com/' }
+    ];
+
+    function renderEmailRichFrame(m) {
       const fr = document.getElementById('emHtmlFrame');
-      fr.classList.toggle('hidden', !showRich);
-      document.getElementById('emViewRichBtn').classList.toggle('btn-blue', showRich);
-      document.getElementById('emViewTextBtn').classList.toggle('btn-blue', !showRich);
-      if (showRich && m) {
-        fr.srcdoc = '<!DOCTYPE html><html dir="auto"><head><meta charset="utf-8"><style>body{font-family:sans-serif;font-size:13px;padding:10px;color:#111;word-break:break-word;}img{max-width:100%;height:auto;}</style></head><body>' + (m.htmlBody || esc(m.body)) + '</body></html>';
-      }
+      const fallbackHtml = '<div style="white-space:pre-wrap;line-height:1.6;">' + esc(m.body || '') + '</div>';
+      const content = (m && m.htmlBody && m.htmlBody.trim().length > 10) ? m.htmlBody : fallbackHtml;
+      fr.srcdoc = '<!DOCTYPE html><html dir="auto"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:14px;padding:12px;margin:0;color:#111;background:#fff;word-break:break-word;line-height:1.55;}img{max-width:100%!important;height:auto!important;}table{max-width:100%!important;}</style></head><body>' + content + '</body></html>';
+    }
+
+    function toggleEmailReplyDrawer(forceOpen) {
+      const d = document.getElementById('emReplyDrawer');
+      if (forceOpen) d.classList.remove('hidden'); else d.classList.toggle('hidden');
+      updateSigPreview('emSigSelect', 'emSigPrev');
+    }
+
+    function openInAppGoogleViewer(title, previewUrl, externalUrl, summary, instructions) {
+      ACTIVE_FV_URL = externalUrl || previewUrl || '';
+      document.getElementById('fvTitle').textContent = '📄 ' + (title || 'קובץ');
+      const sBox = document.getElementById('fvSummaryBox');
+      if (summary) { sBox.textContent = '📌 תקציר AI: ' + summary; sBox.classList.remove('hidden'); } else sBox.classList.add('hidden');
+      const iBox = document.getElementById('fvInstrBox');
+      if (instructions) { document.getElementById('fvInstrVal').textContent = instructions; iBox.classList.remove('hidden'); } else iBox.classList.add('hidden');
+      document.getElementById('fvFrame').src = previewUrl || externalUrl || 'about:blank';
+      openModal('fileViewerModal');
+    }
+
+    function openFvExternal() { if (ACTIVE_FV_URL) window.open(ACTIVE_FV_URL, '_blank'); }
+
+    function openDownloadInApp(dlId) {
+      const d = (STATE && STATE.downloads || []).find(x => x.id === dlId);
+      if (!d) return;
+      openInAppGoogleViewer(d.name, d.previewUrl || d.url, d.url, d.summary, d.instructions);
     }
 
     function openEmailAttachment(attIdx) {
       const m = EMAILS[EMAIL_IDX]; if (!m) return;
-      toast('פותח קובץ מצורף ב-Drive...');
+      toast('טוען קובץ מצורף לתצוגה פנימית (Google Drive)...');
       callServer('apiOpenEmailAttachment', [PIN, m.threadId, attIdx]).then(r => {
-        if (r && r.url) window.open(r.url, '_blank');
-        toast('נפתח: ' + (r && r.name || 'קובץ'));
+        if (r && (r.previewUrl || r.url)) {
+          openInAppGoogleViewer(r.name || 'קובץ מצורף', r.previewUrl, r.url, '', '');
+        }
       }).catch(e => toast('שגיאה: ' + e.message));
+    }
+
+    function resetModelBlocksNow() {
+      toast('מאפס חסימות מודלים...');
+      callServer('apiResetModelBlocks', [PIN]).then(r => toast((r && r.message) || 'אופס ✓')).catch(e => toast(e.message));
+    }
+
+    function openSocialHub() {
+      document.getElementById('socialLinksGrid').innerHTML = SOCIAL_NETS.map(n =>
+        `<a class="social-tile" href="${n.url}" target="_blank" rel="noopener"><span class="social-ic">${n.ic}</span><span>${n.name}</span></a>`
+      ).join('');
+      openModal('socialHubModal');
+    }
+
+    function draftSocialWithAi() {
+      const net = document.getElementById('socNetSel').value, pr = document.getElementById('socPrompt').value.trim();
+      if (!pr) return toast('תאר קודם על מה לכתוב');
+      toast('מנסח עם AI עבור ' + net + '...');
+      callServer('apiDraftSocialPost', [PIN, net, pr]).then(r => {
+        document.getElementById('socPrompt').value = r.text || '';
+        toast('הטקסט מוכן — לחץ העתק ופתח רשת ✓');
+      }).catch(e => toast(e.message));
+    }
+
+    function copyAndOpenSocial() {
+      const netId = document.getElementById('socNetSel').value, txt = document.getElementById('socPrompt').value.trim();
+      const target = SOCIAL_NETS.find(n => n.id === netId) || SOCIAL_NETS[0];
+      if (txt && navigator.clipboard) navigator.clipboard.writeText(txt).catch(() => {});
+      window.open(target.url, '_blank');
+      toast('הועתק ללוח ונפתחה ' + target.name + ' ✓');
+      if (txt) callServer('apiLogSocialAction', [PIN, target.name, txt, LAST_GEO]).catch(() => {});
     }
 
     function doForwardEmail() {
