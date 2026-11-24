@@ -364,7 +364,34 @@
       <div class="fs-scroll">
         <div id="actTitle" class="card-title" style="font-size:16px;"></div>
         <div id="actSub" class="meta-time" style="margin-bottom:8px;"></div>
-        <div id="actBody" style="background:var(--surface);padding:12px;border-radius:14px;border:1px solid var(--border);font-size:13.5px;color:#e2e8f0;white-space:pre-wrap;line-height:1.55;margin-bottom:10px;"></div>
+        <div id="actBody" style="background:var(--surface);padding:12px;border-radius:14px;border:1px solid var(--border);font-size:13.5px;color:#e2e8f0;white-space:pre-wrap;line-height:1.55;margin-bottom:8px;"></div>
+
+        <!-- Original Verbatim Message Box + Correct & Teach Gemini -->
+        <div id="actRawSourceBox" style="background:#0a0f1a;border:1px solid #1e3a5f;border-radius:12px;padding:10px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:5px;">
+            <span style="font-size:11.5px;font-weight:800;color:#60a5fa;">💬 ההודעה המקורית שעליה הסתמך Gemini</span>
+            <button class="btn" style="padding:3px 9px;font-size:11px;" onclick="toggleCorrectCtxBox()">✏️ תקן ולמד הקשר</button>
+          </div>
+          <div id="actRawSourceText" style="font-size:12.5px;color:#cbd5e1;white-space:pre-wrap;line-height:1.45;"></div>
+          <div id="actSourceMeta" style="font-size:11px;color:var(--muted);margin-top:4px;"></div>
+
+          <div id="actCorrectBox" class="hidden" style="margin-top:9px;padding-top:9px;border-top:1px solid #1e3a5f;">
+            <label style="margin-top:0;">כותרת מתוקנת (אם תרצה לשנות)<input id="ccFixTitle"></label>
+            <label>קטגוריה מתוקנת
+              <select id="ccFixCat"><option value="עבודה">עבודה 💼</option><option value="אישי">אישי 🏠</option></select>
+            </label>
+            <label>מה Gemini הבין לא נכון? (יישמר בזיכרון הלמידה לפעמים הבאות)
+              <textarea id="ccLesson" placeholder="לדוגמה: זו רק הודעת עדכון בקבוצה ולא משימה עבורי / אורנה היא..." style="min-height:60px;"></textarea>
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;margin-top:8px;color:#fca5a5;">
+              <input id="ccDeleteWrong" type="checkbox" style="width:17px;height:17px;margin:0;"> זו לא משימה בכלל — מחק אותה ולמד לא ליצור שוב
+            </label>
+            <div class="action-bar" style="margin-top:8px;">
+              <button class="btn btn-grad" onclick="submitContextCorrection()">🧠 שמור תיקון ולמד</button>
+              <button class="btn" onclick="document.getElementById('actCorrectBox').classList.add('hidden')">ביטול</button>
+            </div>
+          </div>
+        </div>
 
         <label>🔍 חפש איש קשר (ממלא טלפון + מייל אוטומטית)
           <input id="actContactSearch" placeholder="חפש מבין 4,200 אנשי קשר..." oninput="liveSearchPicker('actContactSearch','actPickerResults','act')">
@@ -696,7 +723,7 @@
     function runLastUndo() { if (UNDO_FN) { const fn = UNDO_FN; UNDO_FN = null; document.getElementById('toast').classList.add('hidden'); fn(); } }
     function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
     function initials(s) { const p = String(s || '?').trim().split(/\s+/); return (p[0][0] || '?') + (p[1] ? p[1][0] : ''); }
-    const APP_VER = '5.3';
+    const APP_VER = '5.4';
     const MODAL_STACK = [];
     let IGNORING_POP = false;
 
@@ -707,7 +734,7 @@
           localStorage.removeItem('cc_state_cache_v4');
           localStorage.removeItem('cc_state_cache_v5');
           localStorage.setItem('cc_app_ver', APP_VER);
-          if ('caches' in window) caches.keys().then(ks => ks.forEach(k => { if (k !== 'cc-pwa-v5-3') caches.delete(k); }));
+          if ('caches' in window) caches.keys().then(ks => ks.forEach(k => { if (k !== 'cc-pwa-v5-4') caches.delete(k); }));
         }
       } catch (e) {}
     })();
@@ -999,6 +1026,12 @@
       document.getElementById('actTitle').textContent = item.title;
       document.getElementById('actSub').textContent = item.author + (item.time ? ' • ' + item.time : '');
       document.getElementById('actBody').textContent = item.snippet || item.title;
+      const rawTxt = (r && r.rawSource) ? r.rawSource.trim() : '';
+      const srcMeta = (r && r.source) ? r.source : '';
+      document.getElementById('actRawSourceText').textContent = rawTxt || 'הודעה זו עובדה לפני שדרוג שמירת הטקסט הגולמי (החל מהודעות חדשות יוצג כאן הנוסח המלא).';
+      document.getElementById('actSourceMeta').textContent = srcMeta ? ('מקור: ' + srcMeta) : '';
+      document.getElementById('actCorrectBox').classList.add('hidden');
+      document.getElementById('actRawSourceBox').classList.toggle('hidden', item.kind === 'custom');
       document.getElementById('actContactSearch').value = item.author && item.author !== 'ידני' ? item.author : '';
       document.getElementById('actPickerResults').classList.add('hidden');
       document.getElementById('actFeedEditBox').classList.add('hidden');
@@ -1763,16 +1796,74 @@ ${esc(i.planSummary)}</div>` : ''}
       }).catch(e => toast(e.message));
     }
 
+
+    function toggleCorrectCtxBox() {
+      const box = document.getElementById('actCorrectBox');
+      const open = box.classList.contains('hidden');
+      box.classList.toggle('hidden', !open);
+      if (open && ACTION_LIST[ACTION_IDX]) {
+        const it = ACTION_LIST[ACTION_IDX];
+        document.getElementById('ccFixTitle').value = it.title || '';
+        document.getElementById('ccFixCat').value = (it.category === 'אישי') ? 'אישי' : 'עבודה';
+        document.getElementById('ccLesson').value = '';
+        document.getElementById('ccDeleteWrong').checked = false;
+      }
+    }
+
+    function submitContextCorrection() {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it) return;
+      const fixTitle = document.getElementById('ccFixTitle').value.trim();
+      const fixCat = document.getElementById('ccFixCat').value;
+      const lesson = document.getElementById('ccLesson').value.trim();
+      const delWrong = document.getElementById('ccDeleteWrong').checked;
+      if (!lesson && !delWrong && fixTitle === it.title && fixCat === it.category) {
+        return toast('הזן הסבר תיקון או סמן מחיקה כדי ללמד את המערכת');
+      }
+      const payload = {
+        itemKind: it.kind, itemId: it.id, contact: it.author,
+        origTitle: it.title, rawSource: (it.raw && it.raw.rawSource) || it.snippet || '',
+        correctedTitle: fixTitle, correctedCategory: fixCat,
+        lessonNote: lesson, deleteAsFalsePositive: delWrong
+      };
+      document.getElementById('actCorrectBox').classList.add('hidden');
+      if (delWrong) {
+        if (it.kind === 'task' && STATE.tasks) STATE.tasks = STATE.tasks.filter(x => x.id !== it.id);
+        if (it.kind === 'feed' && STATE.history) STATE.history = STATE.history.filter(x => x.id !== it.id);
+        advanceAfterRemoval();
+      } else {
+        if (fixTitle) { it.title = fixTitle; if (it.raw) it.raw.title = fixTitle; document.getElementById('actTitle').textContent = fixTitle; }
+        it.category = fixCat; if (it.raw) it.raw.category = fixCat;
+        renderHome();
+      }
+      toast('שומר תיקון ומלמד את Gemini...');
+      callServer('apiCorrectContextAndLearn', [PIN, payload, LAST_GEO]).then(r => {
+        saveCache();
+        toast((r && r.message) || 'נלמד ונשמר ✓');
+      }).catch(e => toast('שגיאה: ' + e.message));
+    }
+
     function buildIdeaPlan(ideaId) {
-      toast('בונה תוכנית פעולה מותאמת לפי הלו"ז ואנשי הקשר שלך...');
+      const ideaObj = (STATE && STATE.ideas || []).find(x => x.id === ideaId);
+      ACTIVE_PLAN_IDEA_ID = ideaId;
+      PLAN_STEPS = [];
+      document.getElementById('ipTitle').textContent = '🚀 ' + ((ideaObj && ideaObj.title) || 'תוכנית פעולה');
+      document.getElementById('ipOverview').textContent = '⏳ המערכת בונה עבורך תוכנית ומשימות מותאמות לפי ההעדפות שלך...';
+      document.getElementById('ipStepsWrap').innerHTML = '<div class="empty" style="padding:28px 12px;">✨ מנתח את הרעיון ומייצר צעדי ביצוע לפי ההעדפות שלך...<div style="font-size:12px;margin-top:6px;">(כ-5 עד 12 שניות)</div></div>';
+      openModal('ideaPlanModal');
+
       callServer('apiBuildIdeaPlan', [PIN, ideaId]).then(res => {
         ACTIVE_PLAN_IDEA_ID = res.ideaId;
         PLAN_STEPS = res.steps || [];
-        document.getElementById('ipTitle').textContent = '🚀 תוכנית פעולה: ' + (res.ideaTitle || '');
-        document.getElementById('ipOverview').textContent = res.overview || 'ניתן לערוך כל שלב, תאריך ואיש קשר לפני אישור.';
+        document.getElementById('ipTitle').textContent = '🚀 ' + (res.ideaTitle || '');
+        document.getElementById('ipOverview').textContent = res.overview || 'תוכנית מותאמת לפי ההעדפות שלך — ניתן לערוך כל שלב לפני אישור.';
         renderPlanStepsEditor();
-        openModal('ideaPlanModal');
-      }).catch(e => toast('שגיאה בבניית תוכנית: ' + e.message));
+      }).catch(e => {
+        document.getElementById('ipOverview').textContent = '⚠️ לא הצלחתי להפיק אוטומטית כרגע: ' + e.message;
+        document.getElementById('ipStepsWrap').innerHTML = `<div class="empty" style="padding:20px 10px;">
+          <div style="margin-bottom:12px;">ייתכן שהמודל היה עמוס לרגע. ניתן לנסות שוב או להוסיף שלבים ידנית:</div>
+          <button class="btn btn-grad" onclick="buildIdeaPlan('${esc(ideaId)}')">🔄 נסה שוב עכשיו</button>
+        </div>`;
+      });
     }
 
     function renderPlanStepsEditor() {
