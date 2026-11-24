@@ -113,6 +113,14 @@
     .chat-box { max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
     .msg-u { align-self: flex-start; background: var(--blue); color: #fff; padding: 9px 13px; border-radius: 16px 16px 4px 16px; font-size: 13.5px; max-width: 85%; }
     .msg-a { align-self: flex-end; background: var(--surface2); color: #e2e8f0; padding: 9px 13px; border-radius: 16px 16px 16px 4px; font-size: 13.5px; max-width: 90%; white-space: pre-wrap; line-height: 1.45; }
+
+    .att-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .att-chip { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 6px 10px; font-size: 12px; color: #93c5fd; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+    .att-chip:active { background: #1e293b; }
+    .mail-rich-frame { width: 100%; height: 240px; border: 1px solid var(--border); border-radius: 12px; background: #fff; margin-bottom: 10px; }
+    .sig-box { font-size: 11.5px; color: var(--muted); background: #0a0c0f; border: 1px dashed var(--border); border-radius: 10px; padding: 7px 10px; margin-top: 6px; white-space: pre-wrap; }
+    .step-card { background: #0b0e13; border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 8px; }
+    .code-badge { background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.3); border-radius: 10px; padding: 7px 10px; font-size: 12px; color: #bae6fd; margin-top: 8px; line-height: 1.4; }
   </style>
 </head>
 <body>
@@ -125,7 +133,7 @@
       </div>
     </div>
     <div class="hdr-actions">
-      <button class="icon-btn primary" title="משימה חדשה" onclick="openModal('addTaskModal')">＋</button>
+      <button class="icon-btn primary" title="חדש (משימה / מייל / הודעה)" onclick="openModal('quickCreateModal')">＋</button>
       <button class="icon-btn" title="רענן" onclick="loadAll(true)">↻</button>
       <button class="icon-btn" title="הגדרות" onclick="openModal('settingsModal')">⚙️</button>
     </div>
@@ -135,6 +143,116 @@
   <div id="toast" class="toast hidden">
     <span id="toastMsg"></span>
     <button id="toastUndoBtn" class="toast-undo hidden" onclick="runLastUndo()">↩️ בטל</button>
+  </div>
+
+
+  <!-- Quick Create Launcher (All Activity From App: Task / Email / WhatsApp / Idea) -->
+  <div id="quickCreateModal" class="modal hidden">
+    <div class="modal-sheet">
+      <div class="card-title" style="margin-bottom:10px;">⚡ פעולה חדשה מהאפליקציה</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="btn btn-blue" style="justify-content:center;padding:12px;" onclick="closeModal('quickCreateModal'); openModal('addTaskModal');">✅ משימה חדשה</button>
+        <button class="btn btn-grad" style="justify-content:center;padding:12px;" onclick="closeModal('quickCreateModal'); openComposeEmailModal();">📧 מייל חדש</button>
+        <button class="btn btn-ok" style="justify-content:center;padding:12px;" onclick="closeModal('quickCreateModal'); openBlankMessageDrawer();">💬 הודעה / שיחה</button>
+        <button class="btn" style="justify-content:center;padding:12px;" onclick="closeModal('quickCreateModal'); openModal('addIdeaModal');">💡 העלה רעיון</button>
+      </div>
+      <div class="action-bar"><button class="btn" onclick="closeModal('quickCreateModal')">סגור</button></div>
+    </div>
+  </div>
+
+  <!-- Compose New Email Modal (with Contact Search & Signatures) -->
+  <div id="composeMailModal" class="modal hidden">
+    <div class="modal-sheet">
+      <div class="card-title">📧 מייל חדש</div>
+      <label>חפש נמען (או הזן כתובת)<input id="cmSearch" placeholder="חפש איש קשר..." oninput="liveSearchPicker('cmSearch','cmPickerResults','cm')"></label>
+      <div id="cmPickerResults" class="picker-results hidden"></div>
+      <label>אל (כתובת מייל)<input id="cmTo" placeholder="name@example.com" dir="ltr"></label>
+      <label>נושא<input id="cmSubj" placeholder="נושא המייל"></label>
+      <label>תוכן המייל<textarea id="cmBody" style="min-height:110px;"></textarea></label>
+      <label>חתימה מצורפת
+        <select id="cmSig" onchange="updateSigPreview('cmSig','cmSigPrev')">
+          <option value="work">💼 חתימת עבודה (שמעונוביץ / ממסי)</option>
+          <option value="personal">🏠 חתימה אישית</option>
+          <option value="none">ללא חתימה</option>
+        </select>
+      </label>
+      <div id="cmSigPrev" class="sig-box"></div>
+      <div class="action-bar">
+        <button class="btn btn-ok" onclick="sendComposedEmail()">📨 שלח מייל</button>
+        <button class="btn" onclick="closeModal('composeMailModal')">ביטול</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Relationship & Auto-Nickname Modal (Triggered when switching Work / Personal) -->
+  <div id="relationModal" class="modal hidden">
+    <div class="modal-sheet">
+      <div class="card-title" id="relTitle">🏷️ הגדרת קרבה וכינוי</div>
+      <div id="relSub" class="meta-time" style="margin-bottom:8px;"></div>
+      <div class="chips" id="relPresets"></div>
+      <label>מה הקשר שלך אליו? (לדוגמה: בן, קבלן, לקוח, ספק, שותף, חבר)
+        <input id="relInput" placeholder="הקלד או בחר מהאפשרויות למעלה" oninput="suggestNicknameFromRel()">
+      </label>
+      <label>הכינוי שיישמר במערכת (ניתן לעריכה)
+        <input id="relNick">
+      </label>
+      <div class="action-bar">
+        <button class="btn btn-blue" onclick="saveRelationshipModal()">💾 שמור קטגוריה וכינוי</button>
+        <button class="btn" onclick="closeModal('relationModal')">ביטול</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Closed-Loop Task Completion Next-Step Modal -->
+  <div id="nextStepModal" class="modal hidden">
+    <div class="modal-sheet">
+      <div class="card-title">✅ משימה בוצעה — מה הצעד הבא?</div>
+      <div id="nsTaskTitle" class="meta-time" style="margin-bottom:8px;"></div>
+      <label>הערת סיכום / צעד המשך (אופציונלי)<input id="nsNote" placeholder="לדוגמה: שלחתי הצעה, ממתין לאישור..."></label>
+      <label>בעוד כמה ימים לתזכר/לעקוב?<input id="nsDays" type="number" value="2" min="1" max="60"></label>
+      <div class="action-bar">
+        <button class="btn btn-ok" onclick="finishTaskClosedLoop('close')">✓ סגור סופית (עדכן יומן שיחות)</button>
+        <button class="btn btn-blue" onclick="finishTaskClosedLoop('followup')">⏳ פתח מעקב תשובה (SLA)</button>
+        <button class="btn btn-grad" onclick="finishTaskClosedLoop('reminder')">📅 קבע תזכורת המשך</button>
+        <button class="btn" onclick="closeModal('nextStepModal')">ביטול</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add User Idea Modal -->
+  <div id="addIdeaModal" class="modal hidden">
+    <div class="modal-sheet">
+      <div class="card-title">💡 העלאת רעיון חדש</div>
+      <label>סוג הרעיון
+        <select id="niType">
+          <option value="רעיון עסקי">רעיון עסקי</option>
+          <option value="ייעול ושדרוג">ייעול ושדרוג</option>
+          <option value="נופש וחופשה">נופש וחופשה</option>
+          <option value="בילוי ופנאי">בילוי ופנאי</option>
+        </select>
+      </label>
+      <label>כותרת הרעיון<input id="niTitle" placeholder="לדוגמה: הקמת מערך הצעות מחיר מהירות לקבלנים"></label>
+      <label>מה אתה רוצה להשיג / פירוט<textarea id="niDetails" placeholder="תאר בחופשיות — המערכת תבנה מזה תוכנית פעולה עם אנשי הקשר שלך ולוז מתאים..."></textarea></label>
+      <div class="action-bar">
+        <button class="btn btn-grad" onclick="submitUserIdea(true)">🚀 שמור ובנה תוכנית פעולה</button>
+        <button class="btn btn-blue" onclick="submitUserIdea(false)">💾 שמור רעיון</button>
+        <button class="btn" onclick="closeModal('addIdeaModal')">ביטול</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Editable Idea Action Plan Modal -->
+  <div id="ideaPlanModal" class="modal hidden">
+    <div class="modal-sheet">
+      <div class="card-title" id="ipTitle">🚀 תוכנית פעולה מומלצת</div>
+      <div id="ipOverview" class="code-badge" style="margin-bottom:10px;"></div>
+      <div id="ipStepsWrap"></div>
+      <div class="action-bar">
+        <button class="btn" onclick="addBlankPlanStep()">＋ הוסף שלב</button>
+        <button class="btn btn-ok" onclick="approveIdeaPlanNow()">✅ אשר וצור משימות בלו"ז</button>
+        <button class="btn" onclick="closeModal('ideaPlanModal')">ביטול</button>
+      </div>
+    </div>
   </div>
 
   <!-- Setup Modal -->
@@ -241,8 +359,19 @@
       </div>
 
       <div id="emSubject" class="card-title"></div>
-      <div id="emMeta" class="meta-time" style="margin-bottom:8px;"></div>
-      <div id="emBody" style="background:#0a0c0f;padding:10px;border-radius:12px;max-height:190px;overflow-y:auto;border:1px solid var(--border);margin-bottom:10px;font-size:13px;white-space:pre-wrap;line-height:1.45;"></div>
+      <div id="emMeta" class="meta-time" style="margin-bottom:4px;"></div>
+      <div id="emCcLine" class="meta-time hidden" style="margin-bottom:6px;"></div>
+
+      <!-- Attachments Strip -->
+      <div id="emAttachments" class="att-list hidden"></div>
+
+      <!-- Rich HTML vs Clean Text Toggle -->
+      <div style="display:flex;gap:6px;margin-bottom:6px;">
+        <button id="emViewRichBtn" class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="toggleEmailRichView(true)">🎨 תצוגה מעוצבת (HTML)</button>
+        <button id="emViewTextBtn" class="btn btn-blue" style="padding:4px 10px;font-size:11.5px;" onclick="toggleEmailRichView(false)">📝 טקסט נקי</button>
+      </div>
+      <div id="emBody" style="background:#0a0c0f;padding:11px;border-radius:12px;max-height:220px;overflow-y:auto;border:1px solid var(--border);margin-bottom:10px;font-size:13px;white-space:pre-wrap;line-height:1.5;"></div>
+      <iframe id="emHtmlFrame" class="mail-rich-frame hidden" sandbox="allow-same-origin"></iframe>
 
       <label>📂 שייך לקטגוריה (יוצא מהדואר הנכנס ועובר לבא)
         <input id="emCatFilter" placeholder="חפש תווית קיימת או הקלד חדשה..." oninput="renderEmailLabelOptions()" style="margin-top:4px;margin-bottom:6px;">
@@ -253,10 +382,29 @@
       </label>
 
       <label>תגובה / טיוטה<textarea id="emReplyText" placeholder="כתוב תגובה או לחץ '✨ AI'..."></textarea></label>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+        <select id="emSigSelect" onchange="updateSigPreview('emSigSelect','emSigPrev')" style="margin:0;flex:1;">
+          <option value="work">💼 חתימת עבודה</option>
+          <option value="personal">🏠 חתימה אישית</option>
+          <option value="none">ללא חתימה</option>
+        </select>
+        <label style="display:flex;align-items:center;gap:5px;margin:0;white-space:nowrap;font-size:12px;">
+          <input id="emReplyAll" type="checkbox" style="width:16px;height:16px;margin:0;"> השב לכולם
+        </label>
+      </div>
+      <div id="emSigPrev" class="sig-box"></div>
+
+      <!-- Forward Bar (toggleable) -->
+      <div id="emFwdBox" class="hidden" style="margin-top:8px;display:flex;gap:6px;">
+        <input id="emFwdTo" placeholder="העבר לכתובת מייל..." dir="ltr" style="margin:0;flex:1;">
+        <button class="btn btn-blue" onclick="doForwardEmail()">העבר</button>
+      </div>
+
       <div class="action-bar">
         <button class="btn btn-grad" onclick="draftEmailWithAi()">✨ AI</button>
         <button class="btn btn-ok" onclick="sendEmailReply()">📨 שלח ←</button>
         <button class="btn" onclick="saveEmailDraft()">💾 טיוטה</button>
+        <button class="btn" onclick="document.getElementById('emFwdBox').classList.toggle('hidden')">↪️ העבר</button>
         <button class="btn" onclick="archiveActiveEmail()">📥 ארכיון ←</button>
         <button class="btn btn-err" onclick="deleteActiveEmail()">🗑️ מחק ←</button>
       </div>
@@ -274,6 +422,8 @@
       <div class="switch-row"><div><b>רעיונות יזומים אוטומטיים</b></div><input id="setIdeas" type="checkbox"></div>
       <label>שיחות מושתקות מסיכום (מופרד בפסיק)<input id="setSilent"></label>
       <label>קבוצות להתעלמות מלאה (מופרד בפסיק)<input id="setIgnored"></label>
+      <label>חתימת מייל — עבודה<textarea id="setWorkSig" style="min-height:60px;"></textarea></label>
+      <label>חתימת מייל — אישי<textarea id="setPersSig" style="min-height:46px;"></textarea></label>
       <div id="gasConfigWrap" class="hidden">
         <label>כתובת שרת Apps Script (/exec)<input id="setGasUrlEdit" dir="ltr"></label>
         <label>קוד גישה (WEBHOOK_SECRET)<input id="setPinEdit" type="password"></label>
@@ -284,6 +434,7 @@
         <button class="btn" onclick="scheduleSelfReview()">🕓 תזמן סקירה עצמית (04:00)</button>
         <button class="btn" onclick="runSheetCmds()">📋 הרץ פקודות Sheets</button>
         <button class="btn" onclick="processCallsNow()">📞 עבד שיחות חדשות</button>
+        <button class="btn" onclick="processDownloadsNow()">📂 סרוק תיקיית הורדות</button>
         <button class="btn btn-err" onclick="hardResetCache()">🔄 נקה מטמון</button>
         <button class="btn" onclick="closeModal('settingsModal')">סגור</button>
       </div>
@@ -308,6 +459,7 @@
         <div class="chip" onclick="setHomeView('mail', this)">📧 מיילים</div>
         <div class="chip" onclick="setHomeView('feed', this)">📞 שיחות/וואטסאפ</div>
         <div class="chip" onclick="setHomeView('waiting', this)">⏳ ממתין לאחרים</div>
+        <div class="chip" onclick="setHomeView('downloads', this)">📂 הורדות וקבצים</div>
         <div class="chip" onclick="setHomeView('done', this)">✓ הושלמו</div>
       </div>
 
@@ -316,6 +468,7 @@
         <div style="display:flex;gap:7px;margin-bottom:7px;">
           <input id="mailSearch" placeholder="חפש ב-Gmail..." style="margin:0;">
           <button class="btn btn-blue" onclick="loadEmails()">חפש</button>
+          <button class="btn btn-grad" onclick="openComposeEmailModal()">✉️ חדש</button>
         </div>
         <select id="mailLabelFilter" onchange="filterMailByDropdown(this.value)" style="margin:0;">
           <option value="">📂 סנן לפי תווית קיימת ב-Gmail...</option>
@@ -344,9 +497,12 @@
           <button class="btn btn-grad" onclick="sendChat()">שלח</button>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px;gap:6px;">
         <div class="card-title" style="margin:0;">💡 רעיונות והזדמנויות</div>
-        <button class="btn btn-blue" onclick="generateIdeas()">+ הפק חדשים</button>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-grad" onclick="openModal('addIdeaModal')">＋ העלה רעיון</button>
+          <button class="btn btn-blue" onclick="generateIdeas()">✨ הצע לי</button>
+        </div>
       </div>
       <div id="ideasList"></div>
     </section>
@@ -508,6 +664,13 @@
         return items;
       }
 
+      if (view === 'downloads') {
+        (STATE.downloads || []).forEach(d => {
+          items.push({ kind: 'download', raw: d, id: d.id, author: d.contact || 'קובץ', title: d.name, snippet: d.summary, time: d.date, category: d.category, actor: '📂 ' + (d.status || 'עובד') });
+        });
+        return items;
+      }
+
       // 'all' או 'tasks': מאחד משימות פתוחות + אישורים ממתינים + מעקבים + (ב'הכל') מיילים אחרונים שלא נקראו!
       (STATE.approvals || []).filter(a => a.status === 'ממתין לאישור').forEach(a => {
         items.push({ kind: 'approval', raw: a, id: a.id, author: a.recipient, title: a.actionType || 'טיוטה לאישור', snippet: a.draft, time: a.created, category: a.category, actor: '✍️ לאישור שלי' });
@@ -538,15 +701,17 @@
     function renderHome() {
       const box = document.getElementById('homeList');
       const list = buildUnifiedList(HOME_VIEW);
+      const dlHeader = (HOME_VIEW === 'downloads')
+        ? '<div style="margin-bottom:10px;"><button class="btn btn-grad" onclick="processDownloadsNow()">⚡ סרוק תיקיית הורדות_לעיבוד_AI עכשיו</button></div>' : '';
       if (!list.length) {
-        box.innerHTML = '<div class="empty">הכל נקי ומטופל! 🎉</div>';
+        box.innerHTML = dlHeader + '<div class="empty">' + (HOME_VIEW === 'downloads' ? 'אין עדיין קבצים מעובדים מתיקיית ההורדות.' : 'הכל נקי ומטופל! 🎉') + '</div>';
         return;
       }
 
-      box.innerHTML = list.map((it, idx) => {
+      box.innerHTML = dlHeader + list.map((it, idx) => {
         const avCls = it.kind === 'mail' ? 'av-mail' : (it.isOther || it.kind === 'followup' ? 'av-wait' : (it.category === 'עבודה' ? 'av-work' : 'av-pers'));
         const actorCls = it.kind === 'mail' ? 'p-mail' : (it.isOther || it.kind === 'followup' || it.kind === 'approval' ? 'p-other' : 'p-me');
-        const onCardClick = it.kind === 'mail' ? `openEmail(${it.mailIdx})` : `openUnifiedItem(${idx})`;
+        const onCardClick = it.kind === 'mail' ? `openEmail(${it.mailIdx})` : (it.kind === 'download' ? `openDownloadUrl('${esc(it.raw.url)}')` : `openUnifiedItem(${idx})`);
         const quickBtn = it.kind === 'task' && !it.done
           ? `<button class="quick-done" title="סמן בוצע" onclick="event.stopPropagation(); quickDoneTask('${esc(it.id)}')">✓</button>`
           : (it.kind === 'feed'
@@ -642,16 +807,19 @@
 
       // Contextual clean footer controls
       const fb = document.getElementById('actFooterBar');
+      const toggleCatLbl = item.category === 'עבודה' ? '🏠 העבר לאישי' : '💼 העבר לעבודה';
+      const targetCat = item.category === 'עבודה' ? 'אישי' : 'עבודה';
       if (item.kind === 'task') {
         fb.innerHTML = `
-          <button class="btn btn-blue" onclick="completeActiveTaskAndNext()">✓ בוצע ←</button>
-          <button class="btn" onclick="openCalWithGuest()">📅 ליומן + הזמנה</button>
+          <button class="btn btn-blue" onclick="openNextStepForActiveTask()">✓ סיים + המשך</button>
+          <button class="btn" onclick="openCalWithGuest()">📅 ליומן</button>
+          <button class="btn" onclick="openRelModalForActive('${targetCat}')">${toggleCatLbl}</button>
           <button class="btn" onclick="muteActiveContact('silent')">🔇 השתק</button>
-          <button class="btn btn-err" onclick="muteActiveContact('ignore')">🚫 התעלם</button>
           <button class="btn btn-err" onclick="deleteActiveItemAndNext()">🗑️</button>`;
       } else if (item.kind === 'feed') {
         fb.innerHTML = `
           <button class="btn btn-blue" onclick="markActiveFeedReadAndNext()">✓ נקרא ←</button>
+          <button class="btn" onclick="openRelModalForActive('${targetCat}')">${toggleCatLbl}</button>
           <button class="btn" onclick="toggleFeedEditBox()">✏️ ערוך</button>
           <button class="btn" onclick="muteActiveContact('silent')">🔇 השתק</button>
           <button class="btn btn-err" onclick="deleteActiveItemAndNext()">🗑️</button>`;
@@ -891,6 +1059,7 @@
       document.getElementById(boxId).classList.add('hidden');
       const em = (email || '').split(',')[0].trim();
       if (target === 'nt') { document.getElementById('ntContact').value = name; NT_SELECTED = { phone: phone || '', email: em }; }
+      else if (target === 'cm') { document.getElementById('cmSearch').value = name; if (em) document.getElementById('cmTo').value = em; toast('נבחר: ' + name); }
       else {
         document.getElementById('actContactSearch').value = name;
         if (phone) document.getElementById('actPhone').value = phone;
@@ -919,10 +1088,23 @@
       const m = EMAILS[EMAIL_IDX];
       document.getElementById('emCounter').textContent = 'מייל ' + (EMAIL_IDX + 1) + ' מתוך ' + EMAILS.length;
       document.getElementById('emSubject').textContent = m.subject;
-      document.getElementById('emMeta').textContent = m.senderName + ' (' + m.senderEmail + ') • ' + m.date;
+      document.getElementById('emMeta').textContent = 'מאת: ' + m.senderName + ' (' + m.senderEmail + ') • ' + m.date;
+      const ccEl = document.getElementById('emCcLine');
+      if (m.cc) { ccEl.textContent = 'עותק (CC): ' + m.cc; ccEl.classList.remove('hidden'); } else ccEl.classList.add('hidden');
+
+      const attBox = document.getElementById('emAttachments');
+      if (m.attachments && m.attachments.length) {
+        attBox.innerHTML = m.attachments.map(a => `<button class="att-chip" onclick="openEmailAttachment(${a.idx})">📎 ${esc(a.name)} (${a.sizeKb}KB)</button>`).join('');
+        attBox.classList.remove('hidden');
+      } else { attBox.innerHTML = ''; attBox.classList.add('hidden'); }
+
       document.getElementById('emBody').textContent = m.body;
+      toggleEmailRichView(false);
       document.getElementById('emReplyText').value = m.draftReply || '';
+      document.getElementById('emReplyAll').checked = false;
+      document.getElementById('emFwdBox').classList.add('hidden');
       document.getElementById('emCatFilter').value = '';
+      updateSigPreview('emSigSelect', 'emSigPrev');
       renderEmailLabelOptions();
       if (!STATE || !STATE.gmailLabels || !STATE.gmailLabels.length) {
         callServer('apiGetGmailLabels', [PIN, true]).then(lbls => {
@@ -957,7 +1139,7 @@
     }
     function filterMailByDropdown(q) { if (!q) return; MAIL_QUERY = q; loadEmails(false); }
     function draftEmailWithAi() { const m = EMAILS[EMAIL_IDX]; if (!m) return; toast('מנסח עם AI...'); callServer('apiDraftAiEmailReply', [PIN, m.threadId]).then(r => { document.getElementById('emReplyText').value = r.draft || ''; toast('מוכן ✓'); }).catch(e => toast(e.message)); }
-    function sendEmailReply() { const m = EMAILS[EMAIL_IDX], body = document.getElementById('emReplyText').value.trim(); if (!m || !body) return toast('כתוב תשובה'); const tid = m.threadId; removeActiveEmailAndAdvance(); toast('נשלח ✓'); callServer('apiReplyEmail', [PIN, tid, body, false, LAST_GEO]).catch(e => toast(e.message)); }
+    function sendEmailReply() { const m = EMAILS[EMAIL_IDX], body = document.getElementById('emReplyText').value.trim(); if (!m || !body) return toast('כתוב תשובה'); const tid = m.threadId, rAll = document.getElementById('emReplyAll').checked, sig = document.getElementById('emSigSelect').value; removeActiveEmailAndAdvance(); toast('נשלח עם חתימה ✓'); callServer('apiReplyEmail', [PIN, tid, body, rAll, LAST_GEO, sig]).catch(e => toast(e.message)); }
     function saveEmailDraft() { const m = EMAILS[EMAIL_IDX]; if (!m) return; callServer('apiSaveEmailDraft', [PIN, m.threadId, document.getElementById('emReplyText').value]).then(() => toast('טיוטה נשמרה ✓')).catch(e => toast(e.message)); }
     function applyEmailCategory() {
       const m = EMAILS[EMAIL_IDX]; if (!m) return;
@@ -987,6 +1169,7 @@
               <div class="meta-time">${esc(c.category)} • ${esc(c.projects || c.email || c.phone)}</div>
             </div>
           </div>
+          ${c.historyCode ? `<div class="code-badge"><b>🧬 קוד היסטוריה:</b> ${esc(c.historyCode)}<div style="font-size:10.5px;color:var(--muted);margin-top:3px;">${esc(c.frequency || '')}${c.nextProfileDue ? ' • רענון אוטומטי הבא: ' + esc(c.nextProfileDue) : ''}</div></div>` : ''}
           ${hasProf ? `<div class="prof-grid">
             <div class="prof-item"><div class="prof-lbl">💬 סגנון וזמן תגובה</div><div class="prof-val">${esc(c.commStyle)} • ${esc(c.responseTime)}</div></div>
             <div class="prof-item"><div class="prof-lbl">🤝 מוכנות וערוץ מועדף</div><div class="prof-val">${esc(c.cooperation)} | ${esc(c.preferredChannel)}</div></div>
@@ -995,6 +1178,7 @@
           </div>` : ''}
           <div class="action-bar">
             <button class="btn btn-grad" onclick="profileContact(${c.rowNum})">🧠 ${hasProf?'עדכן אפיון':'אפיין עכשיו'}</button>
+            <button class="btn" onclick="openRelModalForContact(${c.rowNum},'${esc(c.name)}','${isW?'אישי':'עבודה'}')">${isW?'🏠 שנה לאישי':'💼 שנה לעבודה'}</button>
             <select style="width:auto;margin:0;padding:5px 9px;font-size:12px;" onchange="changeContactMode(${c.rowNum}, this.value)">
               <option value="רגיל (סיכום + משימות)" ${c.mode.indexOf('רגיל')!==-1?'selected':''}>רגיל</option>
               <option value="שקט (ללא סיכום - לרעיונות בלבד)" ${c.mode.indexOf('שקט')!==-1?'selected':''}>שקט</option>
@@ -1014,8 +1198,11 @@
         <div class="badges"><span class="pill p-other">${esc(i.type)}</span><span class="meta-time">${esc(i.date)}</span></div>
         <div class="card-title">${esc(i.title)}</div>
         <div style="font-size:13px;color:#d8dee9;line-height:1.45;">${esc(i.details)}</div>
+        ${i.planSummary ? `<div class="code-badge" style="white-space:pre-wrap;"><b>📋 תוכנית פעולה:</b>
+${esc(i.planSummary)}</div>` : ''}
         <div class="action-bar">
-          <button class="btn btn-ok" onclick="setIdea('${esc(i.id)}','מעניין - לטיפול')">⭐ מעניין</button>
+          <button class="btn btn-grad" onclick="buildIdeaPlan('${esc(i.id)}')">🚀 בנה תוכנית ומשימות</button>
+          <button class="btn btn-ok" onclick="setIdea('${esc(i.id)}','בוצע')">✓ בוצע</button>
           <button class="btn btn-err" onclick="setIdea('${esc(i.id)}','לא רלוונטי')">הסר</button>
         </div>
       </div>`).join('') : '<div class="empty">לחץ "+ הפק חדשים"</div>';
@@ -1035,6 +1222,8 @@
       document.getElementById('setIdeas').checked = !!s.proactiveIdeasEnabled;
       document.getElementById('setSilent').value = s.silentChatsStr || '';
       document.getElementById('setIgnored').value = s.ignoredGroupsStr || '';
+      document.getElementById('setWorkSig').value = s.workSignature || '';
+      document.getElementById('setPersSig').value = s.personalSignature || '';
       if (!IS_GAS) {
         document.getElementById('gasConfigWrap').classList.remove('hidden');
         document.getElementById('setGasUrlEdit').value = GAS_URL;
@@ -1056,13 +1245,215 @@
         syncGoogleTasks: false,
         proactiveIdeasEnabled: document.getElementById('setIdeas').checked,
         silentChatsStr: document.getElementById('setSilent').value.trim(),
-        ignoredGroupsStr: document.getElementById('setIgnored').value.trim()
+        ignoredGroupsStr: document.getElementById('setIgnored').value.trim(),
+        workSignature: document.getElementById('setWorkSig').value.trim(),
+        personalSignature: document.getElementById('setPersSig').value.trim()
       }]).then(() => { closeModal('settingsModal'); toast('ההגדרות נשמרו ✓'); loadAll(); }).catch(e => toast(e.message));
     }
     function importFromGoogleTasks() { toast('מייבא משימות מ-"מדרגות" ו-"משימות לביצוע"...'); callServer('apiImportGoogleTasks', [PIN]).then(r => { toast((r && r.message) || 'יובא ✓'); closeModal('settingsModal'); loadAll(); }).catch(e => toast(e.message)); }
     function scheduleSelfReview() { toast('מתזמן סקירה עצמית למחר 04:00...'); callServer('apiScheduleSelfReview4AM', [PIN]).then(r => toast('תוזמן ל-' + (r && r.scheduledFor))).catch(e => toast(e.message)); }
     function runSheetCmds() { toast('מריץ פקודות מגיליון Sheets...'); callServer('apiRunSheetCommands', [PIN]).then(r => { toast('בוצעו ' + (r && r.executed || 0) + ' פקודות'); loadAll(); }).catch(e => toast(e.message)); }
     function processCallsNow() { toast('בודק שיחות חדשות בדרייב...'); callServer('apiProcessPendingCallsNow', [PIN]).then(r => { toast((r && r.message) || 'הושלם'); loadAll(); }).catch(e => toast(e.message)); }
+
+
+    // === v5.1 FUNCTIONS: Rich Email, Attachments, Signatures, Relationship Modal, Closed-Loop Tasks, Downloads & Idea Plans ===
+    let REL_CTX = null, NS_TASK_ID = null, ACTIVE_PLAN_IDEA_ID = null, PLAN_STEPS = [];
+
+    function openDownloadUrl(url) { if (url) window.open(url, '_blank'); else toast('אין קישור לקובץ'); }
+    function processDownloadsNow() {
+      toast('סורק ומעבד קבצים מתיקיית הורדות_לעיבוד_AI...');
+      callServer('apiProcessDownloadsNow', [PIN]).then(r => { toast((r && r.message) || 'הושלם'); loadAll(); }).catch(e => toast(e.message));
+    }
+
+    function toggleEmailRichView(showRich) {
+      const m = EMAILS[EMAIL_IDX];
+      document.getElementById('emBody').classList.toggle('hidden', showRich);
+      const fr = document.getElementById('emHtmlFrame');
+      fr.classList.toggle('hidden', !showRich);
+      document.getElementById('emViewRichBtn').classList.toggle('btn-blue', showRich);
+      document.getElementById('emViewTextBtn').classList.toggle('btn-blue', !showRich);
+      if (showRich && m) {
+        fr.srcdoc = '<!DOCTYPE html><html dir="auto"><head><meta charset="utf-8"><style>body{font-family:sans-serif;font-size:13px;padding:10px;color:#111;word-break:break-word;}img{max-width:100%;height:auto;}</style></head><body>' + (m.htmlBody || esc(m.body)) + '</body></html>';
+      }
+    }
+
+    function openEmailAttachment(attIdx) {
+      const m = EMAILS[EMAIL_IDX]; if (!m) return;
+      toast('פותח קובץ מצורף ב-Drive...');
+      callServer('apiOpenEmailAttachment', [PIN, m.threadId, attIdx]).then(r => {
+        if (r && r.url) window.open(r.url, '_blank');
+        toast('נפתח: ' + (r && r.name || 'קובץ'));
+      }).catch(e => toast('שגיאה: ' + e.message));
+    }
+
+    function doForwardEmail() {
+      const m = EMAILS[EMAIL_IDX], to = document.getElementById('emFwdTo').value.trim();
+      if (!m || !to || to.indexOf('@') === -1) return toast('הזן כתובת מייל תקינה');
+      const sig = document.getElementById('emSigSelect').value;
+      toast('מעביר מייל...');
+      callServer('apiForwardEmail', [PIN, m.threadId, to, document.getElementById('emReplyText').value.trim(), LAST_GEO, sig]).then(() => {
+        document.getElementById('emFwdTo').value = ''; document.getElementById('emFwdBox').classList.add('hidden');
+        toast('המייל הועבר בהצלחה ✓');
+      }).catch(e => toast(e.message));
+    }
+
+    function updateSigPreview(selId, prevId) {
+      const val = document.getElementById(selId).value;
+      const box = document.getElementById(prevId);
+      const s = (STATE && STATE.settings) || {};
+      if (val === 'none') { box.classList.add('hidden'); return; }
+      box.textContent = (val === 'personal') ? (s.personalSignature || 'תודה,\nאלון') : (s.workSignature || 'בברכה,\nאלון שמעונוביץ');
+      box.classList.remove('hidden');
+    }
+
+    function openComposeEmailModal() {
+      document.getElementById('cmSearch').value = '';
+      document.getElementById('cmTo').value = '';
+      document.getElementById('cmSubj').value = '';
+      document.getElementById('cmBody').value = '';
+      document.getElementById('cmPickerResults').classList.add('hidden');
+      updateSigPreview('cmSig', 'cmSigPrev');
+      openModal('composeMailModal');
+    }
+
+    function sendComposedEmail() {
+      const to = document.getElementById('cmTo').value.trim(), subj = document.getElementById('cmSubj').value.trim(), body = document.getElementById('cmBody').value.trim();
+      if (!to || to.indexOf('@') === -1) return toast('הזן או בחר כתובת מייל תקינה');
+      if (!body) return toast('כתוב תוכן למייל');
+      const sig = document.getElementById('cmSig').value;
+      closeModal('composeMailModal'); toast('שולח מייל...');
+      callServer('apiSendDirectEmail', [PIN, to, subj, body, document.getElementById('cmSearch').value.trim() || to, sig === 'personal' ? 'אישי' : 'עבודה', '', LAST_GEO, sig]).then(() => toast('המייל נשלח ותועד ✓')).catch(e => toast(e.message));
+    }
+
+    function openBlankMessageDrawer() {
+      ACTION_LIST = [{ kind: 'custom', raw: {}, id: 'new', author: '', title: 'הודעה / שיחה חדשה', snippet: 'בחר איש קשר למעלה ובחר ערוץ לשליחה', time: '', category: 'עבודה', actor: '⚡ חדש' }];
+      ACTION_IDX = 0; loadActionDrawer(); document.getElementById('actFooterBar').innerHTML = ''; openModal('actionModal');
+    }
+
+    // === Relationship & Auto-Nickname Flow ===
+    function openRelModal(ctx) {
+      REL_CTX = ctx;
+      document.getElementById('relTitle').textContent = '🏷️ הגדרת קרבה אל ' + ctx.contactName + ' (' + ctx.category + ')';
+      document.getElementById('relSub').textContent = 'המערכת תתייג את הקשר ותקבע כינוי ברור כדי שלא יתבלבל בעתיד.';
+      const presets = ctx.category === 'אישי'
+        ? ['בן', 'בת', 'משפחה', 'אמא', 'זוגיות', 'חבר/ה', 'מסגרת ילדים', 'נותן שירות']
+        : ['שותף', 'קבלן', 'לקוח', 'ספק', 'מתקין', 'מודד', 'אדריכל/מהנדס', 'עו"ד / רו"ח', 'עובד'];
+      document.getElementById('relPresets').innerHTML = presets.map(p => `<div class="chip" onclick="pickRelPreset('${p}')">${p}</div>`).join('');
+      document.getElementById('relInput').value = '';
+      document.getElementById('relNick').value = ctx.contactName;
+      openModal('relationModal');
+    }
+
+    function openRelModalForActive(targetCat) {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it) return;
+      const name = document.getElementById('actContactSearch').value.trim() || it.author;
+      openRelModal({ contactName: name, category: targetCat, itemKind: it.kind, itemId: it.id, rowNum: 0 });
+    }
+
+    function openRelModalForContact(rowNum, name, targetCat) {
+      openRelModal({ contactName: name, category: targetCat, itemKind: 'crm', itemId: '', rowNum: rowNum });
+    }
+
+    function pickRelPreset(rel) {
+      document.getElementById('relInput').value = rel;
+      suggestNicknameFromRel();
+    }
+
+    function suggestNicknameFromRel() {
+      if (!REL_CTX) return;
+      const rel = document.getElementById('relInput').value.trim();
+      const base = REL_CTX.contactName.replace(/\s*\([^)]*\)\s*$/, '').trim();
+      document.getElementById('relNick').value = rel ? (base + ' (' + rel + ')') : base;
+    }
+
+    function saveRelationshipModal() {
+      if (!REL_CTX) return;
+      const rel = document.getElementById('relInput').value.trim();
+      const nick = document.getElementById('relNick').value.trim();
+      closeModal('relationModal'); toast('שומר קרבה וכינוי...');
+      callServer('apiSetContactRelationship', [PIN, Object.assign({}, REL_CTX, { relationship: rel, nickname: nick }), LAST_GEO]).then(r => {
+        toast('עודכן: ' + (r && r.nickname || nick) + ' (' + REL_CTX.category + ') ✓');
+        loadAll();
+      }).catch(e => toast(e.message));
+    }
+
+    // === Closed-Loop Task Completion ===
+    function openNextStepForActiveTask() {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it || it.kind !== 'task') return;
+      NS_TASK_ID = it.id;
+      document.getElementById('nsTaskTitle').textContent = it.title;
+      document.getElementById('nsNote').value = '';
+      document.getElementById('nsDays').value = '2';
+      openModal('nextStepModal');
+    }
+
+    function finishTaskClosedLoop(nextType) {
+      if (!NS_TASK_ID) return;
+      const tid = NS_TASK_ID, note = document.getElementById('nsNote').value.trim(), days = +document.getElementById('nsDays').value || 2;
+      closeModal('nextStepModal');
+      const it = ACTION_LIST[ACTION_IDX];
+      if (it && it.raw) it.raw.status = 'בוצע';
+      advanceAfterRemoval();
+      toast('מעדכן יומן שיחות והמשך פעילות...');
+      callServer('apiCompleteTaskWithFollowup', [PIN, tid, nextType, note, days, LAST_GEO]).then(r => {
+        toast((r && r.message) || 'בוצע ✓', () => reopenTask(tid));
+        loadAll();
+      }).catch(e => toast(e.message));
+    }
+
+    // === Ideas Workshop: User Ideas + Editable AI Action Plan + Paced Tasks ===
+    function submitUserIdea(buildPlanRightAway) {
+      const title = document.getElementById('niTitle').value.trim(), details = document.getElementById('niDetails').value.trim(), type = document.getElementById('niType').value;
+      if (!title) return toast('הזן כותרת לרעיון');
+      closeModal('addIdeaModal'); toast('שומר רעיון...');
+      callServer('apiCreateUserIdea', [PIN, title, details, type, LAST_GEO]).then(r => {
+        document.getElementById('niTitle').value = ''; document.getElementById('niDetails').value = '';
+        if (buildPlanRightAway && r && r.id) buildIdeaPlan(r.id);
+        else { toast('הרעיון נשמר ✓'); loadAll(); }
+      }).catch(e => toast(e.message));
+    }
+
+    function buildIdeaPlan(ideaId) {
+      toast('בונה תוכנית פעולה מותאמת לפי הלו"ז ואנשי הקשר שלך...');
+      callServer('apiBuildIdeaPlan', [PIN, ideaId]).then(res => {
+        ACTIVE_PLAN_IDEA_ID = res.ideaId;
+        PLAN_STEPS = res.steps || [];
+        document.getElementById('ipTitle').textContent = '🚀 תוכנית פעולה: ' + (res.ideaTitle || '');
+        document.getElementById('ipOverview').textContent = res.overview || 'ניתן לערוך כל שלב, תאריך ואיש קשר לפני אישור.';
+        renderPlanStepsEditor();
+        openModal('ideaPlanModal');
+      }).catch(e => toast('שגיאה בבניית תוכנית: ' + e.message));
+    }
+
+    function renderPlanStepsEditor() {
+      const wrap = document.getElementById('ipStepsWrap');
+      wrap.innerHTML = PLAN_STEPS.map((s, idx) => `<div class="step-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <b style="font-size:12px;color:var(--blue);">שלב ${idx + 1}</b>
+          <button class="btn btn-err" style="padding:3px 8px;font-size:11px;" onclick="removePlanStep(${idx})">✕</button>
+        </div>
+        <input value="${esc(s.title)}" placeholder="כותרת משימה" oninput="PLAN_STEPS[${idx}].title=this.value">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
+          <input value="${esc(s.contact || '')}" placeholder="איש קשר" oninput="PLAN_STEPS[${idx}].contact=this.value">
+          <input type="date" value="${esc(s.dueDate || '')}" oninput="PLAN_STEPS[${idx}].dueDate=this.value">
+        </div>
+        <textarea style="min-height:48px;margin-top:4px;" placeholder="פירוט ביצוע" oninput="PLAN_STEPS[${idx}].details=this.value">${esc(s.details || '')}</textarea>
+      </div>`).join('');
+    }
+
+    function addBlankPlanStep() { PLAN_STEPS.push({ title: '', contact: 'אלון', category: 'עבודה', dueDate: '', dueTime: '10:00', details: '' }); renderPlanStepsEditor(); }
+    function removePlanStep(idx) { PLAN_STEPS.splice(idx, 1); renderPlanStepsEditor(); }
+
+    function approveIdeaPlanNow() {
+      const valid = PLAN_STEPS.filter(s => s.title && s.title.trim());
+      if (!valid.length) return toast('יש להזין לפחות שלב אחד');
+      const ov = document.getElementById('ipOverview').textContent;
+      closeModal('ideaPlanModal'); toast('יוצר משימות מתוזמנות במערכת...');
+      callServer('apiApproveIdeaPlan', [PIN, ACTIVE_PLAN_IDEA_ID, ov, valid, LAST_GEO]).then(r => {
+        toast((r && r.message) || 'המשימות נוצרו ✓');
+        loadAll();
+      }).catch(e => toast(e.message));
+    }
 
     hydrateCachedState();
     loadAll(true);
