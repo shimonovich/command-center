@@ -130,6 +130,53 @@
     .social-tile { background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 11px 12px; display: flex; align-items: center; gap: 9px; cursor: pointer; color: #fff; text-decoration: none; font-weight: 700; font-size: 13px; }
     .social-tile:active { transform: scale(0.97); }
     .social-ic { font-size: 20px; }
+
+    /* Sticky Filter Tabs pinned right under header */
+    .sticky-filters {
+      position: sticky; top: 56px; z-index: 25;
+      background: rgba(0, 0, 0, 0.94); backdrop-filter: blur(12px);
+      margin: 0 -12px 10px; padding: 8px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    /* Floating Scroll-to-Top Button */
+    .scroll-top-btn {
+      position: fixed; bottom: 86px; left: 16px; z-index: 38;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--brand); color: #fff; border: none;
+      font-size: 20px; font-weight: 900; cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0,0,0,.6);
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity .2s, transform .2s;
+    }
+    .scroll-top-btn:active { transform: scale(0.9); }
+
+    /* True Full-Screen Native Modals */
+    .modal.fs { align-items: stretch; background: var(--bg); backdrop-filter: none; }
+    .modal.fs .modal-sheet {
+      width: 100%; max-width: 100%; height: 100dvh; max-height: 100dvh;
+      border-radius: 0; border-top: none; padding: 0;
+      display: flex; flex-direction: column; overflow: hidden;
+      background: var(--bg);
+    }
+    .fs-hdr {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 10px 12px; background: var(--surface); border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .fs-scroll {
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      padding: 12px; overscroll-behavior: contain;
+    }
+    .fs-email-scroll {
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      background: #ffffff; color: #111111; overscroll-behavior: contain;
+    }
+    .fs-footer {
+      flex-shrink: 0; background: var(--surface); border-top: 1px solid var(--border);
+      padding: 8px 12px calc(10px + env(safe-area-inset-bottom));
+    }
+    .file-preview-fs { flex: 1; width: 100%; border: none; background: #111; }
   </style>
 </head>
 <body>
@@ -171,9 +218,10 @@
   </div>
 
   <!-- Compose New Email Modal (with Contact Search & Signatures) -->
-  <div id="composeMailModal" class="modal hidden">
+  <div id="composeMailModal" class="modal fs hidden">
     <div class="modal-sheet">
-      <div class="card-title">📧 מייל חדש</div>
+      <div class="fs-hdr"><div style="display:flex;align-items:center;gap:8px;"><button class="btn" style="padding:6px 11px;font-size:14px;" onclick="goBackModal()">→</button><div class="card-title">📧 מייל חדש</div></div></div>
+      <div class="fs-scroll">
       <label>חפש נמען (או הזן כתובת)<input id="cmSearch" placeholder="חפש איש קשר..." oninput="liveSearchPicker('cmSearch','cmPickerResults','cm')"></label>
       <div id="cmPickerResults" class="picker-results hidden"></div>
       <label>אל (כתובת מייל)<input id="cmTo" placeholder="name@example.com" dir="ltr"></label>
@@ -189,7 +237,8 @@
       <div id="cmSigPrev" class="sig-box"></div>
       <div class="action-bar">
         <button class="btn btn-ok" onclick="sendComposedEmail()">📨 שלח מייל</button>
-        <button class="btn" onclick="closeModal('composeMailModal')">ביטול</button>
+        <button class="btn" onclick="goBackModal()">ביטול</button>
+      </div>
       </div>
     </div>
   </div>
@@ -252,15 +301,17 @@
   </div>
 
   <!-- Editable Idea Action Plan Modal -->
-  <div id="ideaPlanModal" class="modal hidden">
+  <div id="ideaPlanModal" class="modal fs hidden">
     <div class="modal-sheet">
-      <div class="card-title" id="ipTitle">🚀 תוכנית פעולה מומלצת</div>
+      <div class="fs-hdr"><div style="display:flex;align-items:center;gap:8px;"><button class="btn" style="padding:6px 11px;font-size:14px;" onclick="goBackModal()">→</button><div class="card-title" id="ipTitle">🚀 תוכנית פעולה מומלצת</div></div></div>
+      <div class="fs-scroll">
       <div id="ipOverview" class="code-badge" style="margin-bottom:10px;"></div>
       <div id="ipStepsWrap"></div>
       <div class="action-bar">
         <button class="btn" onclick="addBlankPlanStep()">＋ הוסף שלב</button>
         <button class="btn btn-ok" onclick="approveIdeaPlanNow()">✅ אשר וצור משימות בלו"ז</button>
-        <button class="btn" onclick="closeModal('ideaPlanModal')">ביטול</button>
+        <button class="btn" onclick="goBackModal()">ביטול</button>
+      </div>
       </div>
     </div>
   </div>
@@ -296,146 +347,153 @@
     </div>
   </div>
 
-  <!-- Unified Action Drawer (Tasks / Follow-ups / Approvals / Feed) -->
-  <div id="actionModal" class="modal hidden">
+  <!-- Full-Screen Action & Communication Screen (Tasks / Follow-ups / Feed / All Channels) -->
+  <div id="actionModal" class="modal fs hidden">
     <div class="modal-sheet">
-      <div class="triage-bar">
-        <span id="actCounter" class="triage-count"></span>
+      <div class="fs-hdr">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+          <button class="btn" style="padding:6px 11px;font-size:14px;" onclick="goBackModal()">→</button>
+          <span id="actCounter" class="triage-count" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+        </div>
         <div style="display:flex;gap:6px;">
-          <button class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="stepActionItem(-1)">→ הקודם</button>
-          <button class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="stepActionItem(1)">הבא ←</button>
-          <button class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="closeModal('actionModal')">✕</button>
+          <button class="btn" style="padding:5px 10px;font-size:12px;" onclick="stepActionItem(-1)">הקודם</button>
+          <button class="btn" style="padding:5px 10px;font-size:12px;" onclick="stepActionItem(1)">הבא</button>
         </div>
       </div>
 
-      <div id="actTitle" class="card-title"></div>
-      <div id="actSub" class="meta-time" style="margin-bottom:6px;"></div>
-      <div id="actBody" style="background:#0a0c0f;padding:10px;border-radius:12px;max-height:140px;overflow-y:auto;border:1px solid var(--border);font-size:12.5px;color:#cbd5e1;white-space:pre-wrap;line-height:1.45;"></div>
+      <div class="fs-scroll">
+        <div id="actTitle" class="card-title" style="font-size:16px;"></div>
+        <div id="actSub" class="meta-time" style="margin-bottom:8px;"></div>
+        <div id="actBody" style="background:var(--surface);padding:12px;border-radius:14px;border:1px solid var(--border);font-size:13.5px;color:#e2e8f0;white-space:pre-wrap;line-height:1.55;margin-bottom:10px;"></div>
 
-      <label>🔍 בחר איש קשר (טלפון + מייל אוטומטי)
-        <input id="actContactSearch" placeholder="חפש מבין 4,200 אנשי קשר..." oninput="liveSearchPicker('actContactSearch','actPickerResults','act')">
-      </label>
-      <div id="actPickerResults" class="picker-results hidden"></div>
+        <label>🔍 חפש איש קשר (ממלא טלפון + מייל אוטומטית)
+          <input id="actContactSearch" placeholder="חפש מבין 4,200 אנשי קשר..." oninput="liveSearchPicker('actContactSearch','actPickerResults','act')">
+        </label>
+        <div id="actPickerResults" class="picker-results hidden"></div>
 
-      <div class="chan-tabs">
-        <button id="ct-wa" class="chan-tab active" onclick="selectActChannel('wa')">💬 וואטסאפ</button>
-        <button id="ct-mail" class="chan-tab" onclick="selectActChannel('mail')">📧 מייל</button>
-        <button id="ct-sms" class="chan-tab" onclick="selectActChannel('sms')">📱 SMS</button>
-        <button id="ct-call" class="chan-tab" onclick="selectActChannel('call')">📞 חייג</button>
-      </div>
+        <div class="chan-tabs">
+          <button id="ct-wa" class="chan-tab active" onclick="selectActChannel('wa')">💬 וואטסאפ</button>
+          <button id="ct-mail" class="chan-tab" onclick="selectActChannel('mail')">📧 מייל</button>
+          <button id="ct-sms" class="chan-tab" onclick="selectActChannel('sms')">📱 SMS</button>
+          <button id="ct-call" class="chan-tab" onclick="selectActChannel('call')">📞 חייג</button>
+        </div>
 
-      <div id="actWaTypeWrap" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
-        <button id="wt-biz" class="chan-tab active" onclick="selectWaApp('biz')">💼 WA Business</button>
-        <button id="wt-reg" class="chan-tab" onclick="selectWaApp('reg')">🏠 WA רגיל</button>
-      </div>
-      <div id="actPhoneWrap"><input id="actPhone" placeholder="טלפון (מתמלא אוטומטית)" dir="ltr"></div>
-      <div id="actMailWrap" class="hidden">
-        <input id="actEmail" placeholder="כתובת אימייל" dir="ltr">
-        <input id="actSubject" placeholder="נושא המייל">
-      </div>
-      <div id="actTextWrap"><textarea id="actText" placeholder="כתוב הודעה או לחץ '✨ נסח AI'..."></textarea></div>
+        <div id="actWaTypeWrap" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+          <button id="wt-biz" class="chan-tab active" onclick="selectWaApp('biz')">💼 WA Business</button>
+          <button id="wt-reg" class="chan-tab" onclick="selectWaApp('reg')">🏠 WA רגיל</button>
+        </div>
+        <div id="actPhoneWrap"><input id="actPhone" placeholder="טלפון (מתמלא אוטומטית)" dir="ltr"></div>
+        <div id="actMailWrap" class="hidden">
+          <input id="actEmail" placeholder="כתובת אימייל" dir="ltr">
+          <input id="actSubject" placeholder="נושא המייל">
+        </div>
+        <div id="actTextWrap"><textarea id="actText" placeholder="כתוב הודעה או לחץ '✨ נסח AI'..." style="min-height:95px;"></textarea></div>
 
-      <div class="action-bar">
-        <button id="actAiBtn" class="btn btn-grad" onclick="draftActionWithAi()">✨ נסח AI</button>
-        <button id="actExecBtn" class="btn btn-ok" onclick="executeActionChannel()">💼 שלח</button>
-      </div>
+        <div class="action-bar" style="border-top:none;padding-top:4px;">
+          <button id="actAiBtn" class="btn btn-grad" onclick="draftActionWithAi()">✨ נסח AI</button>
+          <button id="actExecBtn" class="btn btn-ok" onclick="executeActionChannel()">💼 שלח</button>
+        </div>
 
-      <!-- Feed Edit Box -->
-      <div id="actFeedEditBox" class="hidden" style="background:#0a0c0f;border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;">
-        <label style="margin-top:0;">איש קשר<input id="feContact"></label>
-        <label>פרויקט<input id="feProject"></label>
-        <label>תקציר<textarea id="feSummary"></textarea></label>
-        <div class="action-bar" style="margin-top:8px;">
-          <button class="btn btn-blue" onclick="saveActiveFeedEdit()">💾 שמור</button>
-          <button class="btn" onclick="document.getElementById('actFeedEditBox').classList.add('hidden')">ביטול</button>
+        <div id="actFeedEditBox" class="hidden" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;">
+          <label style="margin-top:0;">איש קשר<input id="feContact"></label>
+          <label>פרויקט<input id="feProject"></label>
+          <label>תקציר<textarea id="feSummary"></textarea></label>
+          <div class="action-bar" style="margin-top:8px;">
+            <button class="btn btn-blue" onclick="saveActiveFeedEdit()">💾 שמור</button>
+            <button class="btn" onclick="document.getElementById('actFeedEditBox').classList.add('hidden')">ביטול</button>
+          </div>
         </div>
       </div>
 
-      <!-- Contextual Footer Controls -->
-      <div id="actFooterBar" class="action-bar"></div>
+      <div id="actFooterBar" class="fs-footer" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
     </div>
   </div>
 
-  <!-- High-Focus Rich HTML Email Reader (Auto-Advance, Compact Category Bar, In-App Attachments) -->
-  <div id="emailModal" class="modal hidden">
-    <div class="modal-sheet" style="max-height:95vh;padding-top:12px;">
-      <div class="triage-bar" style="margin-bottom:6px;padding-bottom:6px;">
-        <span id="emCounter" class="triage-count"></span>
-        <div style="display:flex;gap:5px;">
-          <button class="btn" style="padding:4px 9px;font-size:11px;" onclick="stepEmail(-1)">→</button>
-          <button class="btn" style="padding:4px 9px;font-size:11px;" onclick="stepEmail(1)">←</button>
-          <button class="btn" style="padding:4px 9px;font-size:11px;" onclick="closeModal('emailModal')">✕</button>
+  <!-- True Full-Screen Native Email Reader (Shadow DOM smooth scroll, 100% working links, compact bottom bar) -->
+  <div id="emailModal" class="modal fs hidden">
+    <div class="modal-sheet">
+      <div class="fs-hdr">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+          <button class="btn" style="padding:6px 11px;font-size:14px;" onclick="goBackModal()">→</button>
+          <span id="emCounter" class="triage-count"></span>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn" style="padding:5px 9px;font-size:12px;" onclick="stepEmail(-1)">הקודם</button>
+          <button class="btn" style="padding:5px 9px;font-size:12px;" onclick="stepEmail(1)">הבא</button>
+          <button class="btn" style="padding:5px 9px;font-size:13px;" onclick="archiveActiveEmail()">📥</button>
+          <button class="btn btn-err" style="padding:5px 9px;font-size:13px;" onclick="deleteActiveEmail()">🗑️</button>
         </div>
       </div>
 
-      <div id="emSubject" style="font-size:15px;font-weight:800;line-height:1.3;margin-bottom:2px;"></div>
-      <div id="emMeta" class="meta-time" style="margin-bottom:4px;"></div>
-      <div id="emCcLine" class="meta-time hidden" style="margin-bottom:4px;"></div>
-      <div id="emAttachments" class="att-list hidden"></div>
-
-      <!-- Main Focus: Rich Styled HTML Email Canvas -->
-      <iframe id="emHtmlFrame" class="mail-focus-frame" sandbox="allow-same-origin"></iframe>
-
-      <!-- Ultra-Compact Single-Line Category Bar -->
-      <div class="compact-cat-bar">
-        <span style="font-size:12px;color:var(--muted);">📂</span>
-        <select id="emCatSelect"></select>
-        <input id="emCatFilter" placeholder="סנן/חדש..." oninput="renderEmailLabelOptions()" style="width:92px;margin:0;padding:4px 7px;font-size:11.5px;border-radius:8px;">
-        <button class="btn btn-blue" style="padding:5px 10px;font-size:11.5px;" onclick="applyEmailCategory()">שייך ←</button>
-      </div>
-
-      <!-- Collapsible Reply Drawer (keeps email clean until you tap Reply!) -->
-      <div id="emReplyDrawer" class="hidden" style="background:#0a0c0f;border:1px solid var(--border);border-radius:12px;padding:9px;margin-bottom:8px;">
-        <textarea id="emReplyText" placeholder="כתוב תגובה..." style="min-height:80px;margin-top:0;"></textarea>
-        <div style="display:flex;gap:6px;align-items:center;margin-top:6px;">
-          <select id="emSigSelect" onchange="updateSigPreview('emSigSelect','emSigPrev')" style="margin:0;padding:6px;font-size:12px;flex:1;">
-            <option value="work">💼 חתימת עבודה</option>
-            <option value="personal">🏠 חתימה אישית</option>
-            <option value="none">ללא חתימה</option>
-          </select>
-          <label style="display:flex;align-items:center;gap:4px;margin:0;font-size:11.5px;white-space:nowrap;">
-            <input id="emReplyAll" type="checkbox" style="width:15px;height:15px;margin:0;"> לכולם
-          </label>
-          <button class="btn btn-ok" style="padding:6px 12px;font-size:12px;" onclick="sendEmailReply()">📨 שלח</button>
-          <button class="btn" style="padding:6px 10px;font-size:12px;" onclick="saveEmailDraft()">💾</button>
+      <!-- Full-Screen Native Smooth-Scrollable Email Surface (Header + Attachments + Rich HTML Shadow DOM) -->
+      <div id="emScrollContainer" class="fs-email-scroll">
+        <div style="padding:12px 14px 8px;border-bottom:1px solid #e5e7eb;background:#f8fafc;">
+          <div id="emSubject" style="font-size:16px;font-weight:800;color:#0f172a;line-height:1.35;"></div>
+          <div id="emMeta" style="font-size:12px;color:#475569;margin-top:4px;"></div>
+          <div id="emCcLine" class="hidden" style="font-size:11.5px;color:#64748b;margin-top:2px;"></div>
+          <div id="emAttachments" class="att-list hidden" style="margin-top:8px;"></div>
         </div>
-        <div id="emSigPrev" class="sig-box"></div>
+        <div id="emShadowHost" style="padding:12px 14px 28px;min-height:60vh;"></div>
       </div>
 
-      <!-- Collapsible Forward Bar -->
-      <div id="emFwdBox" class="hidden" style="display:flex;gap:6px;margin-bottom:8px;">
-        <input id="emFwdTo" placeholder="העבר לכתובת מייל..." dir="ltr" style="margin:0;flex:1;padding:7px 10px;font-size:13px;">
-        <button class="btn btn-blue" style="padding:6px 12px;font-size:12px;" onclick="doForwardEmail()">העבר</button>
-      </div>
+      <!-- Compact Sticky Footer (Category Pill + Reply/Forward Drawers) -->
+      <div class="fs-footer">
+        <div id="emReplyDrawer" class="hidden" style="background:#0a0c0f;border:1px solid var(--border);border-radius:12px;padding:9px;margin-bottom:8px;">
+          <textarea id="emReplyText" placeholder="כתוב תגובה..." style="min-height:78px;margin-top:0;"></textarea>
+          <div style="display:flex;gap:6px;align-items:center;margin-top:6px;">
+            <select id="emSigSelect" onchange="updateSigPreview('emSigSelect','emSigPrev')" style="margin:0;padding:6px;font-size:12px;flex:1;">
+              <option value="work">💼 חתימת עבודה</option>
+              <option value="personal">🏠 חתימה אישית</option>
+              <option value="none">ללא חתימה</option>
+            </select>
+            <label style="display:flex;align-items:center;gap:4px;margin:0;font-size:11.5px;white-space:nowrap;">
+              <input id="emReplyAll" type="checkbox" style="width:15px;height:15px;margin:0;"> לכולם
+            </label>
+            <button class="btn btn-ok" style="padding:6px 12px;font-size:12px;" onclick="sendEmailReply()">📨 שלח</button>
+            <button class="btn" style="padding:6px 10px;font-size:12px;" onclick="saveEmailDraft()">💾</button>
+          </div>
+          <div id="emSigPrev" class="sig-box"></div>
+        </div>
 
-      <!-- Compact Action Bar -->
-      <div class="action-bar" style="margin-top:4px;padding-top:7px;">
-        <button class="btn btn-blue" onclick="toggleEmailReplyDrawer(true)">↩️ השב</button>
-        <button class="btn btn-grad" onclick="toggleEmailReplyDrawer(true); draftEmailWithAi();">✨ השב AI</button>
-        <button class="btn" onclick="document.getElementById('emFwdBox').classList.toggle('hidden')">↪️ העבר</button>
-        <button class="btn" onclick="archiveActiveEmail()">📥</button>
-        <button class="btn btn-err" onclick="deleteActiveEmail()">🗑️</button>
+        <div id="emFwdBox" class="hidden" style="display:flex;gap:6px;margin-bottom:8px;">
+          <input id="emFwdTo" placeholder="העבר לכתובת מייל..." dir="ltr" style="margin:0;flex:1;padding:7px 10px;font-size:13px;">
+          <button class="btn btn-blue" style="padding:6px 12px;font-size:12px;" onclick="doForwardEmail()">העבר</button>
+        </div>
+
+        <div class="compact-cat-bar" style="margin-bottom:6px;padding:3px 7px;">
+          <span style="font-size:11.5px;color:var(--muted);">📂</span>
+          <select id="emCatSelect"></select>
+          <input id="emCatFilter" placeholder="סנן..." oninput="renderEmailLabelOptions()" style="width:74px;margin:0;padding:3px 6px;font-size:11px;border-radius:7px;">
+          <button class="btn btn-blue" style="padding:4px 9px;font-size:11px;" onclick="applyEmailCategory()">שייך ←</button>
+        </div>
+
+        <div style="display:flex;gap:7px;">
+          <button class="btn btn-blue" style="flex:1;justify-content:center;padding:7px;" onclick="toggleEmailReplyDrawer()">↩️ השב</button>
+          <button class="btn btn-grad" style="flex:1;justify-content:center;padding:7px;" onclick="toggleEmailReplyDrawer(true); draftEmailWithAi();">✨ השב AI</button>
+          <button class="btn" style="padding:7px 12px;" onclick="document.getElementById('emFwdBox').classList.toggle('hidden')">↪️ העבר</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- In-App Google Drive File Viewer Modal (PDF, Images, Docs, Sheets, Attachments INSIDE the app!) -->
-  <div id="fileViewerModal" class="modal hidden">
-    <div class="modal-sheet" style="max-height:95vh;">
-      <div class="triage-bar" style="margin-bottom:6px;">
-        <div id="fvTitle" class="card-title" style="margin:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📄 צפייה בקובץ</div>
-        <button class="btn" style="padding:4px 10px;font-size:12px;" onclick="closeModal('fileViewerModal')">✕</button>
+  <!-- Full-Screen In-App Google File & Link Viewer -->
+  <div id="fileViewerModal" class="modal fs hidden">
+    <div class="modal-sheet">
+      <div class="fs-hdr">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">
+          <button class="btn" style="padding:6px 11px;font-size:14px;" onclick="goBackModal()">→</button>
+          <div id="fvTitle" style="font-size:14px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📄 צפייה בקובץ</div>
+        </div>
+        <button class="btn btn-blue" style="padding:5px 10px;font-size:11.5px;" onclick="openFvExternal()">🔗 דרייב</button>
       </div>
-      <div id="fvSummaryBox" class="code-badge hidden" style="margin-top:0;margin-bottom:6px;white-space:pre-wrap;"></div>
-      <div id="fvInstrBox" class="prof-item highlight hidden" style="margin-bottom:6px;">
-        <div class="prof-lbl">🧭 הוראות ביצוע (AI)</div>
-        <div id="fvInstrVal" class="prof-val" style="white-space:pre-wrap;"></div>
+      <div id="fvMetaWrap" style="padding:8px 12px 0;background:var(--surface);flex-shrink:0;">
+        <div id="fvSummaryBox" class="code-badge hidden" style="margin:0 0 6px;white-space:pre-wrap;"></div>
+        <div id="fvInstrBox" class="prof-item highlight hidden" style="margin-bottom:8px;">
+          <div class="prof-lbl">🧭 הוראות ביצוע (AI)</div>
+          <div id="fvInstrVal" class="prof-val" style="white-space:pre-wrap;"></div>
+        </div>
       </div>
-      <iframe id="fvFrame" class="file-preview-frame" allow="autoplay"></iframe>
-      <div class="action-bar">
-        <button class="btn btn-blue" onclick="openFvExternal()">🔗 פתח ב-Google Drive / Docs</button>
-        <button class="btn" onclick="closeModal('fileViewerModal')">סגור</button>
-      </div>
+      <iframe id="fvFrame" class="file-preview-fs" allow="autoplay"></iframe>
     </div>
   </div>
 
@@ -453,12 +511,15 @@
   </div>
 
   <!-- Social Networks Hub Modal (Facebook, Instagram, Messenger, X, LinkedIn, TikTok, Telegram, YouTube + AI Composer) -->
-  <div id="socialHubModal" class="modal hidden">
+  <div id="socialHubModal" class="modal fs hidden">
     <div class="modal-sheet">
-      <div class="triage-bar">
-        <span class="card-title" style="margin:0;">🌐 גישה מהירה לרשתות חברתיות</span>
-        <button class="btn" style="padding:4px 10px;" onclick="closeModal('socialHubModal')">✕</button>
+      <div class="fs-hdr">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="btn" style="padding:6px 11px;font-size:14px;" onclick="goBackModal()">→</button>
+          <span class="card-title" style="margin:0;">🌐 רשתות חברתיות</span>
+        </div>
       </div>
+      <div class="fs-scroll">
       <div class="social-grid" id="socialLinksGrid"></div>
       <div style="background:#0a0c0f;border:1px solid var(--border);border-radius:14px;padding:10px;">
         <div style="font-size:12.5px;font-weight:800;color:var(--blue);margin-bottom:6px;">✨ ניסוח פוסט / תגובה עם AI לכל רשת</div>
@@ -475,6 +536,7 @@
           <button class="btn btn-grad" onclick="draftSocialWithAi()">✨ נסח</button>
           <button class="btn btn-ok" onclick="copyAndOpenSocial()">📋 העתק ופתח רשת</button>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -496,16 +558,12 @@
         <label>כתובת שרת Apps Script (/exec)<input id="setGasUrlEdit" dir="ltr"></label>
         <label>קוד גישה (WEBHOOK_SECRET)<input id="setPinEdit" type="password"></label>
       </div>
+      <div class="code-badge" style="margin-top:10px;">
+        🤖 <b>אוטומציה מלאה פעילה ברקע:</b> ייבוא מ-Google Tasks, עיבוד שיחות והורדות, סקירה עצמית ב-04:00, ניהול מודלים וניקוי מטמון רצים אוטומטית ללא צורך בהתערבותך.
+      </div>
       <div class="action-bar">
         <button class="btn btn-blue" onclick="saveSettings()">💾 שמור הגדרות</button>
-        <button class="btn btn-grad" onclick="importFromGoogleTasks()">📥 ייבא מ-Google Tasks</button>
-        <button class="btn" onclick="scheduleSelfReview()">🕓 תזמן סקירה עצמית (04:00)</button>
-        <button class="btn" onclick="runSheetCmds()">📋 הרץ פקודות Sheets</button>
-        <button class="btn" onclick="processCallsNow()">📞 עבד שיחות חדשות</button>
-        <button class="btn" onclick="processDownloadsNow()">📂 סרוק תיקיית הורדות</button>
-        <button class="btn" onclick="resetModelBlocksNow()">🤖 אפס חסימת מודלים</button>
-        <button class="btn btn-err" onclick="hardResetCache()">🔄 נקה מטמון</button>
-        <button class="btn" onclick="closeModal('settingsModal')">סגור</button>
+        <button class="btn" onclick="goBackModal()">סגור</button>
       </div>
     </div>
   </div>
@@ -522,7 +580,7 @@
         <div id="brBody" class="hero-body hidden"></div>
       </div>
 
-      <div class="chips" id="homeFilters">
+      <div class="chips sticky-filters" id="homeFilters">
         <div class="chip active" onclick="setHomeView('all', this)">⚡ הכל</div>
         <div class="chip" onclick="setHomeView('tasks', this)">✅ משימות</div>
         <div class="chip" onclick="setHomeView('mail', this)">📧 מיילים</div>
@@ -578,6 +636,8 @@
     </section>
   </main>
 
+  <button id="scrollTopBtn" class="scroll-top-btn hidden" title="עלה למעלה" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
   <nav>
     <button class="active" id="nav-home" onclick="switchTab('home','חדר פיקוד',this)"><span class="ic">🏠</span>הכל</button>
     <button id="nav-crm" onclick="switchTab('crm','מודיעין אנשים',this)"><span class="ic">🧠</span>אנשים</button>
@@ -595,6 +655,10 @@
     let PIN = localStorage.getItem('cc_pin') || '';
 
     if ('serviceWorker' in navigator && !IS_GAS) {
+      let swRefreshed = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!swRefreshed) { swRefreshed = true; window.location.reload(); }
+      });
       navigator.serviceWorker.register('sw.js').then(r => r.update().catch(() => {})).catch(() => {});
     }
 
@@ -632,15 +696,88 @@
     function runLastUndo() { if (UNDO_FN) { const fn = UNDO_FN; UNDO_FN = null; document.getElementById('toast').classList.add('hidden'); fn(); } }
     function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
     function initials(s) { const p = String(s || '?').trim().split(/\s+/); return (p[0][0] || '?') + (p[1] ? p[1][0] : ''); }
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    const APP_VER = '5.3';
+    const MODAL_STACK = [];
+    let IGNORING_POP = false;
+
+    // ניקוי מטמון אוטומטי ושקט בכל שדרוג גרסה (ללא צורך בכפתור ידני!)
+    (function autoUpgradeCache() {
+      try {
+        if (localStorage.getItem('cc_app_ver') !== APP_VER) {
+          localStorage.removeItem('cc_state_cache_v4');
+          localStorage.removeItem('cc_state_cache_v5');
+          localStorage.setItem('cc_app_ver', APP_VER);
+          if ('caches' in window) caches.keys().then(ks => ks.forEach(k => { if (k !== 'cc-pwa-v5-3') caches.delete(k); }));
+        }
+      } catch (e) {}
+    })();
+
+    // ניהול כפתור "חזור" של אנדרואיד (popstate) — חוזר למסך/תיבת המייל במקום לצאת מהאפליקציה!
+    try { history.replaceState({ base: true, tab: 'home' }, ''); } catch (e) {}
+
+    window.addEventListener('popstate', () => {
+      if (IGNORING_POP) { IGNORING_POP = false; return; }
+      if (MODAL_STACK.length > 0) {
+        const topId = MODAL_STACK.pop();
+        const el = document.getElementById(topId);
+        if (el) el.classList.add('hidden');
+        if (topId === 'fileViewerModal') {
+          const fr = document.getElementById('fvFrame'); if (fr) fr.src = 'about:blank';
+        }
+        return;
+      }
+      // אם נמצאים בטאב משני (אנשים / עוזר AI) -> חזור לראשי במקום לצאת
+      if (document.getElementById('tab-home').classList.contains('hidden')) {
+        document.getElementById('nav-home').click();
+        try { history.pushState({ base: true, tab: 'home' }, ''); } catch (e) {}
+      }
+    });
+
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const alreadyOpen = !el.classList.contains('hidden');
+      el.classList.remove('hidden');
+      if (!alreadyOpen) {
+        MODAL_STACK.push(id);
+        try { history.pushState({ modal: id, depth: MODAL_STACK.length }, ''); } catch (e) {}
+      }
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+      const idx = MODAL_STACK.lastIndexOf(id);
+      if (idx !== -1) {
+        MODAL_STACK.splice(idx, 1);
+        if (id === 'fileViewerModal') {
+          const fr = document.getElementById('fvFrame'); if (fr) fr.src = 'about:blank';
+        }
+        try { IGNORING_POP = true; history.back(); setTimeout(() => { IGNORING_POP = false; }, 120); } catch (e) {}
+      }
+    }
+
+    function goBackModal() {
+      if (MODAL_STACK.length > 0) {
+        const topId = MODAL_STACK[MODAL_STACK.length - 1];
+        closeModal(topId);
+      }
+    }
+
+    // חץ צף "עלה למעלה" בגלילה
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('scrollTopBtn');
+      if (btn) btn.classList.toggle('hidden', window.scrollY < 220);
+    }, { passive: true });
     function setSyncNote(txt) { const el = document.getElementById('syncNote'); if (el) el.textContent = txt || ''; }
 
     function switchTab(id, title, btn) {
+      const wasHome = !document.getElementById('tab-home').classList.contains('hidden');
       ['home','crm','ai'].forEach(t => document.getElementById('tab-'+t).classList.toggle('hidden', t !== id));
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
       document.getElementById('pageTitle').textContent = title;
+      if (wasHome && id !== 'home') { try { history.pushState({ tab: id }, ''); } catch (e) {} }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -771,8 +908,7 @@
     function renderHome() {
       const box = document.getElementById('homeList');
       const list = buildUnifiedList(HOME_VIEW);
-      const dlHeader = (HOME_VIEW === 'downloads')
-        ? '<div style="margin-bottom:10px;"><button class="btn btn-grad" onclick="processDownloadsNow()">⚡ סרוק תיקיית הורדות_לעיבוד_AI עכשיו</button></div>' : '';
+      const dlHeader = '';
       if (!list.length) {
         box.innerHTML = dlHeader + '<div class="empty">' + (HOME_VIEW === 'downloads' ? 'אין עדיין קבצים מעובדים מתיקיית ההורדות.' : 'הכל נקי ומטופל! 🎉') + '</div>';
         return;
@@ -1356,11 +1492,82 @@ ${esc(i.planSummary)}</div>` : ''}
       { id: 'YouTube', ic: '▶️', name: 'YouTube', url: 'https://m.youtube.com/' }
     ];
 
+    let EM_SHADOW_ROOT = null;
+
+    function handleEmailLinkClick(href) {
+      const url = (href || '').trim();
+      if (!url || url === '#' || url.toLowerCase().indexOf('javascript:') === 0) return;
+
+      // 1. קישור מייל (mailto:) -> נפתח ישירות בחלון מייל חדש בתוך האפליקציה!
+      if (url.toLowerCase().indexOf('mailto:') === 0) {
+        const addr = url.slice(7).split('?')[0].trim();
+        openComposeEmailModal();
+        document.getElementById('cmTo').value = addr;
+        return;
+      }
+      // 2. קישור טלפון (tel:) -> חיוג ישיר
+      if (url.toLowerCase().indexOf('tel:') === 0) {
+        window.location.href = url;
+        return;
+      }
+      // 3. קישור קובץ Google Drive / Docs / PDF / תמונה -> נפתח ישירות במסך מלא בתוך האפליקציה!
+      const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (driveMatch) {
+        openInAppGoogleViewer('מסמך Google Drive', 'https://drive.google.com/file/d/' + driveMatch[1] + '/preview', url, '', '');
+        return;
+      }
+      if (/docs\.google\.com\/(document|spreadsheets|presentation)\/d\/([a-zA-Z0-9_-]+)/.test(url)) {
+        const prev = url.replace(/\/(edit|view).*$/, '/preview');
+        openInAppGoogleViewer('מסמך Google', prev, url, '', '');
+        return;
+      }
+      if (/\.(pdf|png|jpg|jpeg|webp)(\?|$)/i.test(url)) {
+        const gview = /\.pdf(\?|$)/i.test(url) ? ('https://docs.google.com/gview?embedded=true&url=' + encodeURIComponent(url)) : url;
+        openInAppGoogleViewer('צפייה במסמך', gview, url, '', '');
+        return;
+      }
+      // 4. קישורי אינטרנט רגילים -> נפתחים בשכבת Chrome Custom Tab מעל האפליקציה (מונע שגיאת X-Frame-Options, וחזור מחזיר למייל!)
+      const fullUrl = /^https?:\/\//i.test(url) ? url : ('https://' + url.replace(/^\/\//, ''));
+      const win = window.open(fullUrl, '_blank', 'noopener,noreferrer');
+      if (!win) {
+        const a = document.createElement('a');
+        a.href = fullUrl; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        document.body.appendChild(a); a.click(); a.remove();
+      }
+    }
+
     function renderEmailRichFrame(m) {
-      const fr = document.getElementById('emHtmlFrame');
-      const fallbackHtml = '<div style="white-space:pre-wrap;line-height:1.6;">' + esc(m.body || '') + '</div>';
-      const content = (m && m.htmlBody && m.htmlBody.trim().length > 10) ? m.htmlBody : fallbackHtml;
-      fr.srcdoc = '<!DOCTYPE html><html dir="auto"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:14px;padding:12px;margin:0;color:#111;background:#fff;word-break:break-word;line-height:1.55;}img{max-width:100%!important;height:auto!important;}table{max-width:100%!important;}</style></head><body>' + content + '</body></html>';
+      const host = document.getElementById('emShadowHost');
+      if (!host) return;
+      if (!EM_SHADOW_ROOT) EM_SHADOW_ROOT = host.attachShadow({ mode: 'open' });
+
+      const fallbackHtml = '<div style="white-space:pre-wrap;line-height:1.65;">' + esc(m.body || '') + '</div>';
+      let content = (m && m.htmlBody && m.htmlBody.trim().length > 10) ? m.htmlBody : fallbackHtml;
+      // ניקוי תגיות מסוכנות תוך שמירה מלאה על עיצוב המייל והקישורים
+      content = content.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<meta[\s\S]*?>/gi, '').replace(/on\w+\s*=\s*["'][^"']*["']/gi, '');
+
+      EM_SHADOW_ROOT.innerHTML =
+        '<style>' +
+        ':host{display:block;direction:auto;color:#111827;font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:14.5px;line-height:1.6;word-break:break-word;overflow-wrap:anywhere;}' +
+        'img{max-width:100%!important;height:auto!important;border-radius:6px;}' +
+        'table{max-width:100%!important;width:auto!important;border-collapse:collapse;}' +
+        'td,th{max-width:100%!important;}' +
+        'a{color:#1d4ed8!important;text-decoration:underline!important;cursor:pointer!important;}' +
+        'pre{white-space:pre-wrap;overflow-x:auto;}' +
+        '</style>' +
+        '<div id="emContentRoot">' + content + '</div>';
+
+      // יירוט כל קישור במייל כך שלעולם לא תהיה שגיאת התחברות!
+      EM_SHADOW_ROOT.querySelectorAll('a[href]').forEach(a => {
+        a.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          handleEmailLinkClick(a.getAttribute('href'));
+        });
+      });
+
+      const sc = document.getElementById('emScrollContainer');
+      if (sc) sc.scrollTop = 0;
     }
 
     function toggleEmailReplyDrawer(forceOpen) {
