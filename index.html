@@ -11,86 +11,83 @@
   <title>חדר פיקוד • אלון</title>
   <style>
     :root {
-      --bg: #000000; --surface: #121417; --surface2: #1c1f24; --border: #262a31;
-      --text: #f5f7fa; --muted: #8b949e; --blue: #1d9bf0; --grad: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+      --bg: #000000; --surface: #121417; --surface2: #1c1f24; --border: #252930;
+      --text: #f5f7fa; --muted: #8b949e; --blue: #1d9bf0;
       --brand: linear-gradient(135deg,#38bdf8,#6366f1); --ok: #00ba7c; --warn: #ffad1f; --err: #f4212e;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 84px; overflow-x: hidden; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 82px; overflow-x: hidden; }
 
-    header { position: sticky; top: 0; z-index: 30; background: rgba(0,0,0,.88); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+    header { position: sticky; top: 0; z-index: 30; background: rgba(0,0,0,.9); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
     .brand { display: flex; align-items: center; gap: 9px; }
-    .brand-logo { width: 32px; height: 32px; border-radius: 10px; background: var(--brand); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; box-shadow: 0 4px 14px rgba(56,189,248,.35); }
-    .brand h1 { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+    .brand-logo { width: 32px; height: 32px; border-radius: 10px; background: var(--brand); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
+    .brand h1 { margin: 0; font-size: 17px; font-weight: 800; }
     .hdr-actions { display: flex; gap: 8px; }
-    .icon-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-    .icon-btn:active { transform: scale(0.92); }
+    .icon-btn { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     .icon-btn.primary { background: var(--brand); border: none; color: #fff; }
 
-    main { max-width: 640px; margin: 0 auto; padding: 10px 12px; }
+    main { max-width: 620px; margin: 0 auto; padding: 10px 12px; }
 
-    .stories { display: flex; gap: 12px; overflow-x: auto; padding: 6px 2px 12px; scrollbar-width: none; }
-    .stories::-webkit-scrollbar { display: none; }
-    .story { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 66px; cursor: pointer; }
-    .story-ring { width: 58px; height: 58px; border-radius: 50%; padding: 2.5px; background: var(--grad); display: flex; align-items: center; justify-content: center; position: relative; }
-    .story-ring.blue { background: var(--brand); }
-    .story-ring.muted { background: var(--border); }
-    .story-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--surface); border: 2.5px solid #000; display: flex; align-items: center; justify-content: center; font-size: 21px; }
-    .story-badge { position: absolute; bottom: -2px; left: -2px; background: var(--err); color: #fff; font-size: 11px; font-weight: 800; padding: 1px 6px; border-radius: 10px; border: 2px solid #000; }
-    .story-lbl { font-size: 11px; color: var(--muted); text-align: center; white-space: nowrap; }
+    /* Compact collapsible Morning Briefing */
+    .hero { background: linear-gradient(145deg, #121b2e 0%, #15171c 70%); border: 1px solid #263147; border-radius: 16px; padding: 12px 13px; margin-bottom: 12px; }
+    .hero-hdr { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .hero-title { font-size: 14px; font-weight: 800; color: #fff; }
+    .hero-kids { font-size: 12.5px; color: #bae6fd; margin-top: 6px; line-height: 1.4; }
+    .hero-body { font-size: 12.5px; color: #cbd5e1; white-space: pre-wrap; line-height: 1.5; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,.08); }
 
-    .hero { background: linear-gradient(145deg, #131c2e 0%, #16181c 60%, #1f1629 100%); border: 1px solid #2a3346; border-radius: 18px; padding: 14px; margin-bottom: 14px; }
-    .hero-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .hero-title { font-size: 15px; font-weight: 800; color: #fff; }
-    .hero-kids { background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.25); border-radius: 12px; padding: 8px 10px; font-size: 12.5px; color: #bae6fd; margin-bottom: 8px; line-height: 1.45; }
-    .hero-body { font-size: 12.5px; color: #d1d9e6; white-space: pre-wrap; line-height: 1.5; }
+    /* Clean Filter Chips */
+    .chips { display: flex; gap: 7px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip { padding: 7px 14px; border-radius: 99px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .chip.active { background: #fff; color: #000; border-color: #fff; }
 
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 13px; margin-bottom: 10px; }
+    /* Ultra-Clean Minimalist Cards (NO button clutter!) */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 13px; margin-bottom: 9px; cursor: pointer; transition: background .12s; }
+    .card:active { background: #181b20; }
     .card.unread { border-right: 3px solid var(--blue); }
-    .post-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #fff; flex-shrink: 0; }
+    .card-row { display: flex; align-items: flex-start; gap: 10px; }
+    .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #fff; flex-shrink: 0; margin-top: 2px; }
     .av-work { background: linear-gradient(135deg,#0284c7,#4f46e5); }
     .av-pers { background: linear-gradient(135deg,#a855f7,#ec4899); }
     .av-mail { background: linear-gradient(135deg,#ef4444,#f59e0b); }
-    .post-meta { flex: 1; min-width: 0; }
-    .post-author { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .post-sub { font-size: 11.5px; color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 2px; }
+    .av-wait { background: linear-gradient(135deg,#d97706,#ea580c); }
+    .card-main { flex: 1; min-width: 0; }
+    .card-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 3px; }
+    .author { font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .meta-time { font-size: 11px; color: var(--muted); white-space: nowrap; }
+    .card-title { font-size: 14.5px; font-weight: 700; line-height: 1.35; margin: 2px 0 4px; color: #fff; }
+    .card-snippet { font-size: 12.5px; color: var(--muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; align-items: center; }
     .pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+    .p-me { background: rgba(0,186,124,.16); color: #34d399; }
+    .p-other { background: rgba(255,173,31,.16); color: #fcd34d; }
+    .p-mail { background: rgba(239,68,68,.16); color: #fca5a5; }
     .p-work { background: rgba(29,155,240,.16); color: #60a5fa; }
-    .p-pers { background: rgba(168,85,247,.18); color: #d8b4fe; }
-    .p-warn { background: rgba(255,173,31,.16); color: #fcd34d; }
-    .p-ok { background: rgba(0,186,124,.16); color: #34d399; }
-    .post-title { font-size: 15px; font-weight: 700; margin: 4px 0 6px; line-height: 1.35; }
-    .post-body { font-size: 13.5px; color: #d8dee9; white-space: pre-wrap; line-height: 1.5; }
+    .p-pers { background: rgba(168,85,247,.16); color: #d8b4fe; }
+    .quick-done { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-size: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+    .quick-done:active { background: var(--ok); color: #000; border-color: var(--ok); }
 
+    /* Buttons & Inputs inside Modals ONLY */
     .action-bar { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; padding-top: 9px; border-top: 1px solid rgba(255,255,255,.06); }
-    .btn { border: none; border-radius: 99px; padding: 7px 13px; font-size: 12.5px; font-weight: 700; cursor: pointer; background: var(--surface2); color: var(--text); display: inline-flex; align-items: center; gap: 5px; }
+    .btn { border: none; border-radius: 99px; padding: 8px 14px; font-size: 12.5px; font-weight: 700; cursor: pointer; background: var(--surface2); color: var(--text); display: inline-flex; align-items: center; gap: 5px; }
     .btn:active { transform: scale(0.95); }
     .btn-blue { background: var(--blue); color: #fff; }
     .btn-ok { background: var(--ok); color: #042f1e; }
     .btn-err { background: rgba(244,33,46,.16); color: #fb7185; }
     .btn-grad { background: var(--brand); color: #fff; }
 
-    .chips { display: flex; gap: 7px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
-    .chips::-webkit-scrollbar { display: none; }
-    .chip { padding: 6px 13px; border-radius: 99px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-    .chip.active { background: #fff; color: #000; border-color: #fff; }
     input, textarea, select { width: 100%; background: #0a0c0f; color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 9px 12px; font-size: 14px; margin-top: 4px; outline: none; }
     input:focus, textarea:focus, select:focus { border-color: var(--blue); }
     textarea { min-height: 80px; resize: vertical; }
     label { display: block; font-size: 12px; color: var(--muted); margin-top: 9px; font-weight: 600; }
 
-    /* Modal Header Nav Bar for Auto-Advance Triage */
     .triage-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
     .triage-count { font-size: 12px; font-weight: 700; color: var(--blue); }
-    .picker-results { background: #0a0c0f; border: 1px solid var(--border); border-radius: 12px; max-height: 150px; overflow-y: auto; margin-top: 5px; }
-    .picker-row { padding: 8px 10px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 6px; }
-    .picker-row:last-child { border-bottom: none; }
-    .picker-row:active { background: var(--surface2); }
-
     .chan-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0 8px; }
     .chan-tab { border: 1px solid var(--border); background: #0a0c0f; color: var(--muted); border-radius: 12px; padding: 8px 4px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; }
     .chan-tab.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .picker-results { background: #0a0c0f; border: 1px solid var(--border); border-radius: 12px; max-height: 140px; overflow-y: auto; margin-top: 5px; }
+    .picker-row { padding: 8px 10px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 13px; display: flex; justify-content: space-between; gap: 6px; }
 
     .prof-grid { display: grid; gap: 8px; margin-top: 10px; }
     .prof-item { background: #0b0e13; border: 1px solid var(--border); border-radius: 12px; padding: 9px 11px; }
@@ -99,15 +96,16 @@
     .prof-item.highlight { background: linear-gradient(145deg, rgba(0,186,124,.12), rgba(29,155,240,.08)); border-color: rgba(0,186,124,.35); }
     .prof-item.highlight .prof-lbl { color: #34d399; }
 
-    nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.95); backdrop-filter: blur(14px); border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 7px 2px calc(10px + env(safe-area-inset-bottom)); z-index: 40; }
-    nav button { background: none; border: none; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 600; cursor: pointer; position: relative; padding: 2px 0; }
+    /* Clean 3-Tab Bottom Navigation */
+    nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.96); backdrop-filter: blur(14px); border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(3, 1fr); padding: 8px 6px calc(10px + env(safe-area-inset-bottom)); z-index: 40; }
+    nav button { background: none; border: none; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; font-weight: 700; cursor: pointer; padding: 2px 0; }
     nav button.active { color: #fff; }
     nav button .ic { font-size: 20px; line-height: 1.1; }
-    .nav-dot { position: absolute; top: -2px; right: 24%; background: var(--err); color: #fff; font-size: 9.5px; font-weight: 800; padding: 1px 5px; border-radius: 99px; }
 
     .hidden { display: none !important; }
-    .empty { text-align: center; color: var(--muted); padding: 34px 16px; font-size: 14px; }
-    .toast { position: fixed; top: 64px; left: 50%; transform: translateX(-50%); background: var(--blue); color: #fff; padding: 9px 18px; border-radius: 99px; font-size: 13px; font-weight: 700; z-index: 95; box-shadow: 0 8px 24px rgba(0,0,0,.55); max-width: 92vw; text-align: center; }
+    .empty { text-align: center; color: var(--muted); padding: 36px 16px; font-size: 14px; }
+    .toast { position: fixed; bottom: 86px; left: 50%; transform: translateX(-50%); background: #1e293b; border: 1px solid var(--blue); color: #fff; padding: 10px 16px; border-radius: 99px; font-size: 13px; font-weight: 700; z-index: 95; box-shadow: 0 8px 24px rgba(0,0,0,.65); display: flex; align-items: center; gap: 10px; max-width: 92vw; }
+    .toast-undo { background: var(--blue); color: #fff; border: none; border-radius: 99px; padding: 4px 11px; font-size: 12px; font-weight: 800; cursor: pointer; }
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,.82); backdrop-filter: blur(4px); display: flex; align-items: flex-end; justify-content: center; z-index: 80; }
     .modal-sheet { background: var(--surface); border-top: 1px solid var(--border); border-radius: 22px 22px 0 0; padding: 16px 15px 24px; width: 100%; max-width: 600px; max-height: 92vh; overflow-y: auto; }
     .switch-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
@@ -128,33 +126,34 @@
     </div>
     <div class="hdr-actions">
       <button class="icon-btn primary" title="משימה חדשה" onclick="openModal('addTaskModal')">＋</button>
-      <button class="icon-btn" title="רענן" onclick="loadAll()">↻</button>
+      <button class="icon-btn" title="רענן" onclick="loadAll(true)">↻</button>
       <button class="icon-btn" title="הגדרות" onclick="openModal('settingsModal')">⚙️</button>
     </div>
   </header>
 
-  <div id="toast" class="toast hidden"></div>
+  <!-- Toast with Instant Undo -->
+  <div id="toast" class="toast hidden">
+    <span id="toastMsg"></span>
+    <button id="toastUndoBtn" class="toast-undo hidden" onclick="runLastUndo()">↩️ בטל</button>
+  </div>
 
-  <!-- Setup Modal (GitHub Pages first launch) -->
+  <!-- Setup Modal -->
   <div id="setupModal" class="modal hidden">
     <div class="modal-sheet">
-      <div class="post-title">חיבור האפליקציה ל-Google Apps Script</div>
-      <div class="post-body" style="color:var(--muted);margin-bottom:10px;">הדבק את כתובת ה-Web App העדכנית (מסתיימת ב-<code>/exec</code>). ודא שזו אותה כתובת גם בדפדפן וגם באפליקציה בטלפון.</div>
+      <div class="card-title">חיבור האפליקציה ל-Google Apps Script</div>
       <label>כתובת השרת (/exec)<input id="setupGasUrl" placeholder="https://script.google.com/macros/s/.../exec" dir="ltr"></label>
-      <label>קוד גישה (WEBHOOK_SECRET)<input id="setupPin" type="password" placeholder="הסיסמה שהגדרת ב-Apps Script"></label>
-      <div class="action-bar">
-        <button class="btn btn-blue" onclick="saveServerConfig()">שמור והתחבר</button>
-      </div>
+      <label>קוד גישה (WEBHOOK_SECRET)<input id="setupPin" type="password"></label>
+      <div class="action-bar"><button class="btn btn-blue" onclick="saveServerConfig()">שמור והתחבר</button></div>
     </div>
   </div>
 
-  <!-- Add Task Modal (with Save OR Save & Execute Now!) -->
+  <!-- Add Task Modal -->
   <div id="addTaskModal" class="modal hidden">
     <div class="modal-sheet">
-      <div class="post-title">➕ משימה חדשה — רשום או בצע מיד</div>
+      <div class="card-title">➕ משימה חדשה</div>
       <label>כותרת המשימה<input id="ntTitle" placeholder="לדוגמה: לשלוח הצעת מחיר לאלקטרה"></label>
       <label>קטגוריה<select id="ntCat"><option value="עבודה">עבודה 💼</option><option value="אישי">אישי 🏠</option></select></label>
-      <label>חפש איש קשר (או הקלד שם)<input id="ntContact" placeholder="לדוגמה: ערן, דבי, עמית..." oninput="liveSearchPicker('ntContact','ntPickerResults','nt')"></label>
+      <label>איש קשר<input id="ntContact" placeholder="חפש שם..." oninput="liveSearchPicker('ntContact','ntPickerResults','nt')"></label>
       <div id="ntPickerResults" class="picker-results hidden"></div>
       <div style="display:flex;gap:8px;">
         <label style="flex:1;">תאריך יעד<input id="ntDate" type="date"></label>
@@ -162,71 +161,74 @@
       </div>
       <label>פירוט<textarea id="ntDetails"></textarea></label>
       <div class="action-bar">
-        <button class="btn btn-grad" onclick="saveNewTask(true)">⚡ שמור ובצע עכשיו</button>
-        <button class="btn btn-blue" onclick="saveNewTask(false)">💾 שמור משימה</button>
+        <button class="btn btn-grad" onclick="saveNewTask(true)">⚡ שמור ובצע</button>
+        <button class="btn btn-blue" onclick="saveNewTask(false)">💾 שמור</button>
         <button class="btn" onclick="closeModal('addTaskModal')">ביטול</button>
       </div>
     </div>
   </div>
 
-  <!-- Unified Action & Execution Modal (Tasks + Feed -> WhatsApp / SMS / Email / Call + Contact Search + Auto-Advance!) -->
+  <!-- Unified Action Drawer (Tasks / Follow-ups / Approvals / Feed) -->
   <div id="actionModal" class="modal hidden">
     <div class="modal-sheet">
       <div class="triage-bar">
         <span id="actCounter" class="triage-count"></span>
         <div style="display:flex;gap:6px;">
-          <button id="actPrevBtn" class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="stepActionItem(-1)">→ הקודם</button>
-          <button id="actNextBtn" class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="stepActionItem(1)">הבא ←</button>
+          <button class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="stepActionItem(-1)">→ הקודם</button>
+          <button class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="stepActionItem(1)">הבא ←</button>
           <button class="btn" style="padding:4px 10px;font-size:11.5px;" onclick="closeModal('actionModal')">✕</button>
         </div>
       </div>
 
-      <div id="actTitle" class="post-title"></div>
-      <div id="actSub" class="post-sub" style="margin-bottom:6px;"></div>
-      <div id="actBody" class="post-body" style="background:#0a0c0f;padding:9px;border-radius:12px;max-height:140px;overflow-y:auto;border:1px solid var(--border);font-size:12.5px;color:#cbd5e1;"></div>
+      <div id="actTitle" class="card-title"></div>
+      <div id="actSub" class="meta-time" style="margin-bottom:6px;"></div>
+      <div id="actBody" style="background:#0a0c0f;padding:10px;border-radius:12px;max-height:140px;overflow-y:auto;border:1px solid var(--border);font-size:12.5px;color:#cbd5e1;white-space:pre-wrap;line-height:1.45;"></div>
 
-      <!-- Live Contact Picker (4,198 contacts) -->
-      <label>🔍 חפש ובחר איש קשר (ממלא טלפון + מייל אוטומטית)
-        <input id="actContactSearch" placeholder="הקלד שם, חברה או פרויקט לחיפוש..." oninput="liveSearchPicker('actContactSearch','actPickerResults','act')">
+      <label>🔍 בחר איש קשר (טלפון + מייל אוטומטי)
+        <input id="actContactSearch" placeholder="חפש מבין 4,200 אנשי קשר..." oninput="liveSearchPicker('actContactSearch','actPickerResults','act')">
       </label>
       <div id="actPickerResults" class="picker-results hidden"></div>
 
-      <!-- 4 Communication Channels -->
       <div class="chan-tabs">
         <button id="ct-wa" class="chan-tab active" onclick="selectActChannel('wa')">💬 וואטסאפ</button>
-        <button id="ct-sms" class="chan-tab" onclick="selectActChannel('sms')">📱 SMS</button>
         <button id="ct-mail" class="chan-tab" onclick="selectActChannel('mail')">📧 מייל</button>
-        <button id="ct-call" class="chan-tab" onclick="selectActChannel('call')">📞 שיחה</button>
+        <button id="ct-sms" class="chan-tab" onclick="selectActChannel('sms')">📱 SMS</button>
+        <button id="ct-call" class="chan-tab" onclick="selectActChannel('call')">📞 חייג</button>
       </div>
 
-      <div id="actPhoneWrap">
-        <label>מספר טלפון<input id="actPhone" placeholder="בחר איש קשר למעלה או הזן מספר" dir="ltr"></label>
+      <div id="actWaTypeWrap" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+        <button id="wt-biz" class="chan-tab active" onclick="selectWaApp('biz')">💼 WA Business</button>
+        <button id="wt-reg" class="chan-tab" onclick="selectWaApp('reg')">🏠 WA רגיל</button>
       </div>
+      <div id="actPhoneWrap"><input id="actPhone" placeholder="טלפון (מתמלא אוטומטית)" dir="ltr"></div>
       <div id="actMailWrap" class="hidden">
-        <label>כתובת אימייל<input id="actEmail" placeholder="בחר איש קשר למעלה או הזן מייל" dir="ltr"></label>
-        <label>נושא המייל<input id="actSubject" placeholder="נושא ההודעה"></label>
+        <input id="actEmail" placeholder="כתובת אימייל" dir="ltr">
+        <input id="actSubject" placeholder="נושא המייל">
       </div>
-      <div id="actTextWrap">
-        <label>תוכן ההודעה / המייל
-          <textarea id="actText" placeholder="כתוב כאן או לחץ '✨ נסח עם AI'..." style="min-height:85px;"></textarea>
-        </label>
-      </div>
+      <div id="actTextWrap"><textarea id="actText" placeholder="כתוב הודעה או לחץ '✨ נסח AI'..."></textarea></div>
 
       <div class="action-bar">
-        <button id="actAiBtn" class="btn btn-grad" onclick="draftActionWithAi()">✨ נסח עם AI</button>
-        <button id="actExecBtn" class="btn btn-ok" onclick="executeActionChannel()">📲 שלח בוואטסאפ</button>
+        <button id="actAiBtn" class="btn btn-grad" onclick="draftActionWithAi()">✨ נסח AI</button>
+        <button id="actExecBtn" class="btn btn-ok" onclick="executeActionChannel()">💼 שלח</button>
       </div>
 
-      <!-- Task Lifecycle Bar (shown when opened from a Task -> Auto-Advance!) -->
-      <div id="actTaskControls" class="action-bar hidden">
-        <button class="btn btn-blue" onclick="completeActiveTaskAndNext()">✓ סמן בוצע ועבור לבא</button>
-        <button class="btn" onclick="addActiveTaskToCal()">📅 ליומן</button>
-        <button class="btn btn-err" onclick="deleteActiveTaskAndNext()">🗑️ מחק</button>
+      <!-- Feed Edit Box -->
+      <div id="actFeedEditBox" class="hidden" style="background:#0a0c0f;border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;">
+        <label style="margin-top:0;">איש קשר<input id="feContact"></label>
+        <label>פרויקט<input id="feProject"></label>
+        <label>תקציר<textarea id="feSummary"></textarea></label>
+        <div class="action-bar" style="margin-top:8px;">
+          <button class="btn btn-blue" onclick="saveActiveFeedEdit()">💾 שמור</button>
+          <button class="btn" onclick="document.getElementById('actFeedEditBox').classList.add('hidden')">ביטול</button>
+        </div>
       </div>
+
+      <!-- Contextual Footer Controls -->
+      <div id="actFooterBar" class="action-bar"></div>
     </div>
   </div>
 
-  <!-- Email Triage Modal (Auto-Advance + Categorize Moves Out of Inbox!) -->
+  <!-- Upgraded Email Triage Modal (Auto-Advance + Categorize Leaves Inbox!) -->
   <div id="emailModal" class="modal hidden">
     <div class="modal-sheet">
       <div class="triage-bar">
@@ -238,25 +240,22 @@
         </div>
       </div>
 
-      <div id="emSubject" class="post-title"></div>
-      <div id="emMeta" class="post-sub" style="margin-bottom:8px;"></div>
-      <div id="emBody" class="post-body" style="background:#0a0c0f;padding:10px;border-radius:12px;max-height:190px;overflow-y:auto;border:1px solid var(--border);margin-bottom:10px;"></div>
+      <div id="emSubject" class="card-title"></div>
+      <div id="emMeta" class="meta-time" style="margin-bottom:8px;"></div>
+      <div id="emBody" style="background:#0a0c0f;padding:10px;border-radius:12px;max-height:190px;overflow-y:auto;border:1px solid var(--border);margin-bottom:10px;font-size:13px;white-space:pre-wrap;line-height:1.45;"></div>
 
-      <label>📂 שייך לקטגוריה (יוצא אוטומטית מהדואר הנכנס ועובר למייל הבא)
-        <input id="emCatFilter" placeholder="חפש תווית קיימת (למשל אשראל, עבודה, אישי) או הקלד חדשה..." oninput="renderEmailLabelOptions()" style="margin-top:4px;margin-bottom:6px;">
+      <label>📂 שייך לקטגוריה (יוצא מהדואר הנכנס ועובר לבא)
+        <input id="emCatFilter" placeholder="חפש תווית קיימת או הקלד חדשה..." oninput="renderEmailLabelOptions()" style="margin-top:4px;margin-bottom:6px;">
         <div style="display:flex;gap:6px;">
           <select id="emCatSelect" style="margin:0;flex:1;"></select>
-          <button class="btn btn-blue" onclick="applyEmailCategory()">שייך והעבר ←</button>
+          <button class="btn btn-blue" onclick="applyEmailCategory()">שייך ←</button>
         </div>
       </label>
 
-      <label>תגובה / עריכת טיוטה למייל
-        <textarea id="emReplyText" placeholder="כתוב תגובה או לחץ 'נסח עם AI'..." style="min-height:95px;"></textarea>
-      </label>
-
+      <label>תגובה / טיוטה<textarea id="emReplyText" placeholder="כתוב תגובה או לחץ '✨ AI'..."></textarea></label>
       <div class="action-bar">
-        <button class="btn btn-grad" onclick="draftEmailWithAi()">✨ נסח עם AI</button>
-        <button class="btn btn-ok" onclick="sendEmailReply()">📨 שלח ועבור לבא</button>
+        <button class="btn btn-grad" onclick="draftEmailWithAi()">✨ AI</button>
+        <button class="btn btn-ok" onclick="sendEmailReply()">📨 שלח ←</button>
         <button class="btn" onclick="saveEmailDraft()">💾 טיוטה</button>
         <button class="btn" onclick="archiveActiveEmail()">📥 ארכיון ←</button>
         <button class="btn btn-err" onclick="deleteActiveEmail()">🗑️ מחק ←</button>
@@ -267,101 +266,86 @@
   <!-- Settings Modal -->
   <div id="settingsModal" class="modal hidden">
     <div class="modal-sheet">
-      <div class="post-title">⚙️ הגדרות וסנכרון</div>
+      <div class="card-title">⚙️ הגדרות וכלים</div>
+      <div class="switch-row"><div><b>עיבוד מיידי בזמן אמת (ללא המתנת 15 דק')</b></div><input id="setRealtime" type="checkbox"></div>
       <div class="switch-row"><div><b>תדריך בוקר באפליקציה (08:00)</b></div><input id="setBriefing" type="checkbox"></div>
+      <div class="switch-row"><div><b>קביעת פגישות אוטומטית ביומן + הזמנת אורח</b></div><input id="setAutoCal" type="checkbox"></div>
       <div class="switch-row"><div><b>מייל סיכום יומי אוטומטי</b></div><input id="setDailyEmail" type="checkbox"></div>
-      <div class="switch-row"><div><b>סנכרון ל-Google Tasks</b></div><input id="setSyncTasks" type="checkbox"></div>
-      <div class="switch-row"><div><b>המרה אוטומטית ליומן</b></div><input id="setAutoCal" type="checkbox"></div>
       <div class="switch-row"><div><b>רעיונות יזומים אוטומטיים</b></div><input id="setIdeas" type="checkbox"></div>
-      <label>מצב עיבוד וואטסאפ
-        <select id="setWaMode"><option value="אצווה_15_דקות">אצווה כל 15 דקות (חיסכון 75% טוקנים)</option><option value="זמן_אמת">זמן אמת</option></select>
-      </label>
-      <label>שיחות לעיבוד שקט (מופרד בפסיק)<input id="setSilent"></label>
-      <label>קבוצות להתעלמות (מופרד בפסיק)<input id="setIgnored"></label>
+      <label>שיחות מושתקות מסיכום (מופרד בפסיק)<input id="setSilent"></label>
+      <label>קבוצות להתעלמות מלאה (מופרד בפסיק)<input id="setIgnored"></label>
       <div id="gasConfigWrap" class="hidden">
         <label>כתובת שרת Apps Script (/exec)<input id="setGasUrlEdit" dir="ltr"></label>
         <label>קוד גישה (WEBHOOK_SECRET)<input id="setPinEdit" type="password"></label>
       </div>
       <div class="action-bar">
-        <button class="btn btn-blue" onclick="saveSettings()">💾 שמור</button>
-        <button class="btn" onclick="sendEmailNow()">📧 שלח סיכום היום</button>
-        <button class="btn btn-err" onclick="hardResetCache()">🔄 נקה מטמון וסנכרן</button>
+        <button class="btn btn-blue" onclick="saveSettings()">💾 שמור הגדרות</button>
+        <button class="btn btn-grad" onclick="importFromGoogleTasks()">📥 ייבא מ-Google Tasks</button>
+        <button class="btn" onclick="scheduleSelfReview()">🕓 תזמן סקירה עצמית (04:00)</button>
+        <button class="btn" onclick="runSheetCmds()">📋 הרץ פקודות Sheets</button>
+        <button class="btn" onclick="processCallsNow()">📞 עבד שיחות חדשות</button>
+        <button class="btn btn-err" onclick="hardResetCache()">🔄 נקה מטמון</button>
         <button class="btn" onclick="closeModal('settingsModal')">סגור</button>
       </div>
     </div>
   </div>
 
   <main>
-    <!-- TAB 1: HOME -->
+    <!-- TAB 1: UNIFIED WORKSPACE (Briefing + Tasks + Emails + Calls/WA + Followups — Clean & Clutter-Free!) -->
     <section id="tab-home">
-      <div class="stories" id="storiesBar"></div>
       <div id="briefingCard" class="hero">
-        <div class="hero-top">
+        <div class="hero-hdr" onclick="toggleBriefingExpand()">
           <div class="hero-title" id="brTitle">☀️ תדריך בוקר</div>
-          <button class="btn" style="padding:4px 10px;font-size:11px;" onclick="refreshBriefing()">↻ עדכן</button>
+          <span style="font-size:12px;color:var(--blue);" id="brToggleTxt">הרחב ▾</span>
         </div>
-        <div id="brKids" class="hero-kids">טוען תדריך...</div>
-        <div id="brBody" class="hero-body"></div>
+        <div id="brKids" class="hero-kids">טוען...</div>
+        <div id="brBody" class="hero-body hidden"></div>
       </div>
 
       <div class="chips" id="homeFilters">
-        <div class="chip active" onclick="setHomeView('tasks_all', this)">✅ משימות פתוחות</div>
-        <div class="chip" onclick="setHomeView('feed', this)">📞 פיד שיחות והודעות</div>
-        <div class="chip" onclick="setHomeView('tasks_work', this)">💼 עבודה</div>
-        <div class="chip" onclick="setHomeView('tasks_pers', this)">🏠 אישי</div>
-        <div class="chip" onclick="setHomeView('tasks_done', this)">✓ הושלמו</div>
+        <div class="chip active" onclick="setHomeView('all', this)">⚡ הכל</div>
+        <div class="chip" onclick="setHomeView('tasks', this)">✅ משימות</div>
+        <div class="chip" onclick="setHomeView('mail', this)">📧 מיילים</div>
+        <div class="chip" onclick="setHomeView('feed', this)">📞 שיחות/וואטסאפ</div>
+        <div class="chip" onclick="setHomeView('waiting', this)">⏳ ממתין לאחרים</div>
+        <div class="chip" onclick="setHomeView('done', this)">✓ הושלמו</div>
       </div>
+
+      <!-- Mail Search/Label Bar (shown only when Mail filter is active) -->
+      <div id="mailToolsBar" class="hidden" style="margin-bottom:10px;">
+        <div style="display:flex;gap:7px;margin-bottom:7px;">
+          <input id="mailSearch" placeholder="חפש ב-Gmail..." style="margin:0;">
+          <button class="btn btn-blue" onclick="loadEmails()">חפש</button>
+        </div>
+        <select id="mailLabelFilter" onchange="filterMailByDropdown(this.value)" style="margin:0;">
+          <option value="">📂 סנן לפי תווית קיימת ב-Gmail...</option>
+        </select>
+      </div>
+
       <div id="homeList"><div class="empty">טוען את חדר הפיקוד שלך...</div></div>
     </section>
 
-    <!-- TAB 2: GMAIL MANAGER -->
-    <section id="tab-mail" class="hidden">
-      <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <input id="mailSearch" placeholder="חפש מייל, שולח או נושא..." style="margin:0;">
-        <button class="btn btn-blue" onclick="loadEmails()">חפש</button>
-      </div>
-      <div class="chips">
-        <div class="chip active" onclick="filterMail('in:inbox', this)">דואר נכנס</div>
-        <div class="chip" onclick="filterMail('in:inbox is:unread', this)">לא נקראו</div>
-        <div class="chip" onclick="filterMail('label:\"עבודה\"', this)">עבודה</div>
-        <div class="chip" onclick="filterMail('label:\"אשראל\"', this)">אשראל</div>
-        <div class="chip" onclick="filterMail('label:\"אישי\"', this)">אישי</div>
-      </div>
-      <select id="mailLabelFilter" onchange="filterMailByDropdown(this.value)" style="margin:0 0 10px 0;">
-        <option value="">📂 סנן לפי כל תווית קיימת ב-Gmail...</option>
-      </select>
-      <div id="mailList"><div class="empty">טוען מיילים מ-Gmail...</div></div>
-    </section>
-
-    <!-- TAB 3: APPROVALS & SLA -->
-    <section id="tab-approvals" class="hidden">
-      <div class="post-title" style="margin-bottom:8px;">✍️ ממתין לאישור שלך</div>
-      <div id="approvalsList"></div>
-      <div class="post-title" style="margin:18px 0 8px;">⏳ מחכה לתשובה מאחרים (SLA)</div>
-      <div id="followupsList"></div>
-    </section>
-
-    <!-- TAB 4: CRM & CONTACT PROFILING -->
+    <!-- TAB 2: CRM PEOPLE & PROFILING -->
     <section id="tab-crm" class="hidden">
       <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <input id="crmSearch" placeholder="חפש מבין 4,198 אנשי קשר (שם, מייל, פרויקט)..." style="margin:0;">
+        <input id="crmSearch" placeholder="חפש איש קשר (שם, טלפון, פרויקט)..." style="margin:0;">
         <button class="btn btn-blue" onclick="searchContacts()">חפש</button>
       </div>
       <div id="crmList"><div class="empty">טוען אנשי קשר...</div></div>
     </section>
 
-    <!-- TAB 5: AI CHAT & PROACTIVE IDEAS -->
+    <!-- TAB 3: AI ASSISTANT & IDEAS -->
     <section id="tab-ai" class="hidden">
-      <div class="card">
-        <div class="post-title">✨ העוזר האישי שלך</div>
+      <div class="card" style="cursor:default;">
+        <div class="card-title">✨ העוזר האישי</div>
         <div id="chatBox" class="chat-box"></div>
         <div style="display:flex;gap:8px;">
-          <input id="chatInput" placeholder="שאל כל דבר על המשימות, השיחות או האנשים שלך..." style="margin:0;">
+          <input id="chatInput" placeholder="שאל כל דבר על המשימות, השיחות או האנשים..." style="margin:0;">
           <button class="btn btn-grad" onclick="sendChat()">שלח</button>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px;">
-        <div class="post-title" style="margin:0;">💡 רעיונות והזדמנויות</div>
+        <div class="card-title" style="margin:0;">💡 רעיונות והזדמנויות</div>
         <button class="btn btn-blue" onclick="generateIdeas()">+ הפק חדשים</button>
       </div>
       <div id="ideasList"></div>
@@ -369,25 +353,33 @@
   </main>
 
   <nav>
-    <button class="active" id="nav-home" onclick="switchTab('home','חדר פיקוד',this)"><span class="ic">🏠</span>ראשי</button>
-    <button id="nav-mail" onclick="switchTab('mail','ניהול מיילים',this); if(!EMAILS.length) loadEmails();"><span class="ic">📧</span>מייל</button>
-    <button id="nav-approvals" onclick="switchTab('approvals','אישורים ומעקב',this)"><span class="ic">✍️</span>אישורים<span id="badgeAppr" class="nav-dot hidden">0</span></button>
-    <button id="nav-crm" onclick="switchTab('crm','מודיעין אנשי קשר',this)"><span class="ic">🧠</span>אנשים</button>
-    <button id="nav-ai" onclick="switchTab('ai','AI ורעיונות',this)"><span class="ic">✨</span>AI</button>
+    <button class="active" id="nav-home" onclick="switchTab('home','חדר פיקוד',this)"><span class="ic">🏠</span>הכל</button>
+    <button id="nav-crm" onclick="switchTab('crm','מודיעין אנשים',this)"><span class="ic">🧠</span>אנשים</button>
+    <button id="nav-ai" onclick="switchTab('ai','עוזר ורעיונות',this)"><span class="ic">✨</span>עוזר AI</button>
   </nav>
 
   <script>
-    let STATE = null, EMAILS = [], EMAIL_IDX = -1, HOME_VIEW = 'tasks_all', MAIL_QUERY = 'in:inbox';
-    let ACTION_MODE = 'task', ACTION_LIST = [], ACTION_IDX = -1, ACTIVE_CHAN = 'wa';
-    let NT_SELECTED = { phone: '', email: '' };
-    let PICKER_TIMER = null;
+    let STATE = null, EMAILS = [], EMAIL_IDX = -1, HOME_VIEW = 'all', MAIL_QUERY = 'in:inbox';
+    let ACTION_LIST = [], ACTION_IDX = -1, ACTIVE_CHAN = 'wa', WA_APP = 'biz';
+    let NT_SELECTED = { phone: '', email: '' }, PICKER_TIMER = null, UNDO_FN = null, TOAST_TIMER = null;
+    let LAST_GEO = '';
+
     const IS_GAS = (typeof google !== 'undefined' && google.script && google.script.run);
     let GAS_URL = localStorage.getItem('cc_gas_url') || '';
     let PIN = localStorage.getItem('cc_pin') || '';
 
     if ('serviceWorker' in navigator && !IS_GAS) {
-      navigator.serviceWorker.register('sw.js').then(reg => { reg.update().catch(() => {}); }).catch(() => {});
+      navigator.serviceWorker.register('sw.js').then(r => r.update().catch(() => {})).catch(() => {});
     }
+
+    // לכידת מיקום GPS שקטה ברקע לתיעוד הנסתר (לא חוסמת שום פעולה)
+    function refreshSilentGeo() {
+      if (!navigator.geolocation) return;
+      navigator.geolocation.getCurrentPosition(pos => {
+        LAST_GEO = pos.coords.latitude.toFixed(5) + ',' + pos.coords.longitude.toFixed(5);
+      }, () => {}, { maximumAge: 600000, timeout: 4000 });
+    }
+    refreshSilentGeo();
 
     function callServer(fnName, args) {
       return new Promise((resolve, reject) => {
@@ -395,23 +387,23 @@
           google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[fnName].apply(null, args);
         } else {
           if (!GAS_URL) { openModal('setupModal'); return reject(new Error('יש להזין כתובת שרת')); }
-          fetch(GAS_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ apiCall: fnName, args: args })
-          })
-          .then(r => r.json())
-          .then(j => { if (j && j.ok) resolve(j.data); else reject(new Error((j && j.error) || 'שגיאת שרת')); })
-          .catch(reject);
+          fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ apiCall: fnName, args: args }) })
+            .then(r => r.json())
+            .then(j => { if (j && j.ok) resolve(j.data); else reject(new Error((j && j.error) || 'שגיאת שרת')); })
+            .catch(reject);
         }
       });
     }
 
-    function toast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.classList.remove('hidden');
-      setTimeout(() => t.classList.add('hidden'), 3200);
+    function toast(msg, undoCallback) {
+      clearTimeout(TOAST_TIMER);
+      document.getElementById('toastMsg').textContent = msg;
+      UNDO_FN = undoCallback || null;
+      document.getElementById('toastUndoBtn').classList.toggle('hidden', !undoCallback);
+      document.getElementById('toast').classList.remove('hidden');
+      TOAST_TIMER = setTimeout(() => { document.getElementById('toast').classList.add('hidden'); UNDO_FN = null; }, undoCallback ? 6000 : 3000);
     }
+    function runLastUndo() { if (UNDO_FN) { const fn = UNDO_FN; UNDO_FN = null; document.getElementById('toast').classList.add('hidden'); fn(); } }
     function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
     function initials(s) { const p = String(s || '?').trim().split(/\s+/); return (p[0][0] || '?') + (p[1] ? p[1][0] : ''); }
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
@@ -419,86 +411,61 @@
     function setSyncNote(txt) { const el = document.getElementById('syncNote'); if (el) el.textContent = txt || ''; }
 
     function switchTab(id, title, btn) {
-      ['home','mail','approvals','crm','ai'].forEach(t => document.getElementById('tab-'+t).classList.toggle('hidden', t !== id));
+      ['home','crm','ai'].forEach(t => document.getElementById('tab-'+t).classList.toggle('hidden', t !== id));
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
       document.getElementById('pageTitle').textContent = title;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function toggleBriefingExpand() {
+      const b = document.getElementById('brBody');
+      const hidden = b.classList.toggle('hidden');
+      document.getElementById('brToggleTxt').textContent = hidden ? 'הרחב ▾' : 'צמצם ▴';
+    }
+
     function saveServerConfig() {
-      const u = document.getElementById('setupGasUrl').value.trim();
-      const p = document.getElementById('setupPin').value.trim();
+      const u = document.getElementById('setupGasUrl').value.trim(), p = document.getElementById('setupPin').value.trim();
       if (!u || u.indexOf('script.google.com') === -1) return toast('הזן כתובת /exec תקינה');
-      GAS_URL = u; PIN = p;
-      localStorage.setItem('cc_gas_url', u); localStorage.setItem('cc_pin', p);
-      closeModal('setupModal'); loadAll();
+      GAS_URL = u; PIN = p; localStorage.setItem('cc_gas_url', u); localStorage.setItem('cc_pin', p);
+      closeModal('setupModal'); loadAll(true);
     }
 
     function hardResetCache() {
-      localStorage.removeItem('cc_state_cache_v4');
+      localStorage.removeItem('cc_state_cache_v5');
       if ('caches' in window) caches.keys().then(ks => ks.forEach(k => caches.delete(k)));
-      toast('מטמון נוקה — מסנכרן מחדש...');
-      closeModal('settingsModal');
-      loadAll();
-    }
-
-    function renderAllFromState() {
-      if (!STATE) return;
-      renderStories(); renderBriefing(); renderHome(); renderApprovals();
-      renderContacts(STATE.contacts || []); renderEmailLabelOptions();
-      renderMailFilterDropdown(); renderIdeas(); renderChat(); renderSettings();
+      closeModal('settingsModal'); toast('מטמון נוקה — מרענן...'); loadAll(true);
     }
 
     function hydrateCachedState() {
       try {
-        const raw = localStorage.getItem('cc_state_cache_v4');
+        const raw = localStorage.getItem('cc_state_cache_v5');
         if (raw) { STATE = JSON.parse(raw); renderAllFromState(); }
       } catch (e) {}
     }
 
-    function loadAll() {
+    function renderAllFromState() {
+      if (!STATE) return;
+      renderBriefing(); renderHome(); renderContacts(STATE.contacts || []);
+      renderEmailLabelOptions(); renderMailFilterDropdown(); renderIdeas(); renderChat(); renderSettings();
+    }
+
+    function loadAll(alsoLoadMail) {
       if (!IS_GAS && !GAS_URL) { openModal('setupModal'); return; }
+      refreshSilentGeo();
       setSyncNote('מסנכרן...');
       callServer('getAppBootstrap', [PIN]).then(data => {
         if (data && data.locked) { setSyncNote(''); openModal('setupModal'); return toast('נדרש קוד גישה'); }
         STATE = data;
-        try { localStorage.setItem('cc_state_cache_v4', JSON.stringify(data)); } catch (e) {}
+        try { localStorage.setItem('cc_state_cache_v5', JSON.stringify(data)); } catch (e) {}
         renderAllFromState();
-        setSyncNote(data.serverVersion ? ('מעודכן • v' + data.serverVersion) : '⚠️ נדרשת פריסת גרסה חדשה ב-Apps Script');
+        setSyncNote(data.serverVersion ? ('מעודכן • v' + data.serverVersion) : '⚠️ נדרשת פריסת גרסה חדשה');
+        if (alsoLoadMail || !EMAILS.length) loadEmails(true);
       }).catch(e => { setSyncNote('שגיאת חיבור'); toast('שגיאה: ' + e.message); });
     }
 
-    function openFeedTab() {
-      document.getElementById('nav-home').click();
-      const chip = document.querySelectorAll('#homeFilters .chip')[1];
-      setHomeView('feed', chip);
-    }
-
-    function renderStories() {
-      const pendAppr = (STATE.approvals || []).filter(a => a.status === 'ממתין לאישור').length;
-      const openF = (STATE.followups || []).filter(f => f.status === 'ממתין לתשובה').length;
-      const feedCnt = (STATE.history || []).length;
-      const newIdeas = (STATE.ideas || []).filter(i => i.status === 'חדש').length;
-      const bEl = document.getElementById('badgeAppr');
-      if (pendAppr > 0) { bEl.textContent = pendAppr; bEl.classList.remove('hidden'); } else bEl.classList.add('hidden');
-
-      document.getElementById('storiesBar').innerHTML = [
-        { ic:'☀️', lbl:'תדריך בוקר', cls:'blue', cnt:0, fn:"document.getElementById('briefingCard').scrollIntoView({behavior:'smooth'})" },
-        { ic:'📞', lbl:'פיד שיחות', cls:'', cnt:feedCnt, fn:"openFeedTab()" },
-        { ic:'📧', lbl:'מיילים', cls:'blue', cnt:0, fn:"document.getElementById('nav-mail').click()" },
-        { ic:'✍️', lbl:'לאישור', cls:pendAppr?'':'muted', cnt:pendAppr, fn:"document.getElementById('nav-approvals').click()" },
-        { ic:'⏳', lbl:'מעקב SLA', cls:openF?'blue':'muted', cnt:openF, fn:"document.getElementById('nav-approvals').click()" },
-        { ic:'🧠', lbl:'אפיון CRM', cls:'blue', cnt:0, fn:"document.getElementById('nav-crm').click()" },
-        { ic:'💡', lbl:'רעיונות', cls:newIdeas?'':'muted', cnt:newIdeas, fn:"document.getElementById('nav-ai').click()" }
-      ].map(s => `<div class="story" onclick="${s.fn}">
-        <div class="story-ring ${s.cls}"><div class="story-inner">${s.ic}</div>${s.cnt ? `<span class="story-badge">${s.cnt}</span>` : ''}</div>
-        <div class="story-lbl">${s.lbl}</div>
-      </div>`).join('');
-    }
-
     function renderBriefing() {
-      const b = STATE.briefing;
+      const b = STATE && STATE.briefing;
       if (!b) return;
       document.getElementById('brTitle').textContent = '☀️ ' + (b.title || 'תדריך בוקר');
       document.getElementById('brKids').textContent = '👨‍👧‍👦 ' + (b.kidsNote || '');
@@ -508,197 +475,198 @@
       document.getElementById('brBody').textContent = txt.trim() || 'הכל נקי ומוכן ליום פרודוקטיבי!';
     }
 
-    function refreshBriefing() {
-      toast('מרענן תדריך בוקר...');
-      callServer('apiRefreshMorningBriefing', [PIN]).then(b => {
-        STATE.briefing = b; renderBriefing(); toast('תדריך הבוקר עודכן ✓');
-      }).catch(e => toast('שגיאה: ' + e.message));
-    }
+    // === UNIFIED INBOX BUILDER (Tasks + Pending Approvals + Follow-ups + Unread Emails + Unread Feed) ===
+    function buildUnifiedList(view) {
+      const items = [];
+      if (!STATE) return items;
 
-    function getFilteredTasks() {
-      return (STATE && STATE.tasks || []).filter(t => {
-        const done = (t.status === 'בוצע' || t.status === 'הושלם');
-        if (HOME_VIEW === 'tasks_done') return done;
-        if (done) return false;
-        if (HOME_VIEW === 'tasks_work') return t.category === 'עבודה';
-        if (HOME_VIEW === 'tasks_pers') return t.category === 'אישי';
-        return true;
+      if (view === 'done') {
+        (STATE.tasks || []).filter(t => t.status === 'בוצע' || t.status === 'הושלם').forEach(t => {
+          items.push({ kind: 'task', raw: t, id: t.id, author: t.contact || 'משימה', title: t.title, snippet: t.details, time: t.dueDate || t.created, category: t.category, actor: '✓ הושלם', done: true });
+        });
+        return items;
+      }
+
+      if (view === 'mail') {
+        EMAILS.forEach((m, i) => {
+          items.push({ kind: 'mail', mailIdx: i, raw: m, id: m.threadId, author: m.senderName, title: m.subject, snippet: m.snippet, time: m.date, category: 'מייל', actor: '📧 מייל', unread: m.unread });
+        });
+        return items;
+      }
+
+      if (view === 'feed') {
+        (STATE.history || []).filter(h => h.status !== 'נקרא').forEach(h => {
+          items.push({ kind: 'feed', raw: h, id: h.id, author: h.contact, title: (h.project ? h.project + ' • ' : '') + h.channel, snippet: h.summary, time: h.time, category: h.category, actor: '📞 ' + h.channel });
+        });
+        return items;
+      }
+
+      if (view === 'waiting') {
+        (STATE.followups || []).filter(f => f.status === 'ממתין לתשובה').forEach(f => {
+          items.push({ kind: 'followup', raw: f, id: f.id, author: f.contact, title: f.asked, snippet: f.project || ('SLA: ' + f.slaDue), time: f.slaDue, category: f.category, actor: '⏳ ממתין ל: ' + f.contact });
+        });
+        return items;
+      }
+
+      // 'all' או 'tasks': מאחד משימות פתוחות + אישורים ממתינים + מעקבים + (ב'הכל') מיילים אחרונים שלא נקראו!
+      (STATE.approvals || []).filter(a => a.status === 'ממתין לאישור').forEach(a => {
+        items.push({ kind: 'approval', raw: a, id: a.id, author: a.recipient, title: a.actionType || 'טיוטה לאישור', snippet: a.draft, time: a.created, category: a.category, actor: '✍️ לאישור שלי' });
       });
+
+      (STATE.tasks || []).filter(t => t.status !== 'בוצע' && t.status !== 'הושלם').forEach(t => {
+        const isMe = !t.assignee || t.assignee === 'אני' || t.assignee === 'אלון';
+        items.push({ kind: 'task', raw: t, id: t.id, author: t.contact || 'משימה', title: t.title, snippet: t.details, time: t.dueDate ? (t.dueDate + (t.dueTime ? ' ' + t.dueTime : '')) : t.created, category: t.category, actor: isMe ? '👤 אני' : ('⏳ ' + t.assignee), isOther: !isMe });
+      });
+
+      if (view === 'all') {
+        EMAILS.slice(0, 6).forEach((m, i) => {
+          items.push({ kind: 'mail', mailIdx: i, raw: m, id: m.threadId, author: m.senderName, title: m.subject, snippet: m.snippet, time: m.date, category: 'מייל', actor: '📧 מייל', unread: m.unread });
+        });
+      }
+      return items;
     }
 
     function setHomeView(v, el) {
       HOME_VIEW = v;
       document.querySelectorAll('#homeFilters .chip').forEach(c => c.classList.remove('active'));
       if (el) el.classList.add('active');
+      document.getElementById('mailToolsBar').classList.toggle('hidden', v !== 'mail');
+      if (v === 'mail' && !EMAILS.length) loadEmails(false);
       renderHome();
     }
 
     function renderHome() {
       const box = document.getElementById('homeList');
-      if (HOME_VIEW === 'feed') {
-        const list = (STATE && STATE.history) || [];
-        box.innerHTML = list.length ? list.map((h, idx) => `<div class="card" onclick="openActionFromFeed(${idx})" style="cursor:pointer;">
-          <div class="post-hdr">
-            <div class="avatar ${h.category==='עבודה'?'av-work':'av-pers'}">${esc(initials(h.contact))}</div>
-            <div class="post-meta">
-              <div class="post-author">${esc(h.contact)} ${h.project ? '• ' + esc(h.project) : ''}</div>
-              <div class="post-sub"><span class="pill ${h.category==='עבודה'?'p-work':'p-pers'}">${esc(h.channel)}</span><span>${esc(h.time)}</span></div>
-            </div>
-          </div>
-          <div class="post-body">${esc(h.summary)}</div>
-          <div class="action-bar" onclick="event.stopPropagation()">
-            <button class="btn btn-ok" onclick="openActionFromFeed(${idx},'wa')">💬 וואטסאפ</button>
-            <button class="btn btn-blue" onclick="openActionFromFeed(${idx},'mail')">📧 מייל</button>
-            <button class="btn" onclick="openActionFromFeed(${idx},'sms')">📱 SMS</button>
-            <button class="btn" onclick="openActionFromFeed(${idx},'call')">📞 חייג</button>
-          </div>
-        </div>`).join('') : '<div class="empty">אין עדיין שיחות או הודעות בפיד</div>';
+      const list = buildUnifiedList(HOME_VIEW);
+      if (!list.length) {
+        box.innerHTML = '<div class="empty">הכל נקי ומטופל! 🎉</div>';
         return;
       }
 
-      const list = getFilteredTasks();
-      box.innerHTML = list.length ? list.map((t, idx) => {
-        const isW = t.category === 'עבודה', done = (t.status === 'בוצע' || t.status === 'הושלם');
-        return `<div class="card" onclick="openActionFromTask(${idx})" style="cursor:pointer;">
-          <div class="post-hdr">
-            <div class="avatar ${isW?'av-work':'av-pers'}">${esc(initials(t.contact))}</div>
-            <div class="post-meta">
-              <div class="post-author">${esc(t.contact)} ${t.project ? '• ' + esc(t.project) : ''}</div>
-              <div class="post-sub"><span class="pill ${isW?'p-work':'p-pers'}">${isW?'עבודה 💼':'אישי 🏠'}</span>${t.dueDate?`<span class="pill p-warn">📅 ${esc(t.dueDate)} ${esc(t.dueTime)}</span>`:''}</div>
+      box.innerHTML = list.map((it, idx) => {
+        const avCls = it.kind === 'mail' ? 'av-mail' : (it.isOther || it.kind === 'followup' ? 'av-wait' : (it.category === 'עבודה' ? 'av-work' : 'av-pers'));
+        const actorCls = it.kind === 'mail' ? 'p-mail' : (it.isOther || it.kind === 'followup' || it.kind === 'approval' ? 'p-other' : 'p-me');
+        const onCardClick = it.kind === 'mail' ? `openEmail(${it.mailIdx})` : `openUnifiedItem(${idx})`;
+        const quickBtn = it.kind === 'task' && !it.done
+          ? `<button class="quick-done" title="סמן בוצע" onclick="event.stopPropagation(); quickDoneTask('${esc(it.id)}')">✓</button>`
+          : (it.kind === 'feed'
+              ? `<button class="quick-done" title="אשר שנקרא" onclick="event.stopPropagation(); quickMarkFeedRead('${esc(it.id)}')">✓</button>`
+              : (it.kind === 'task' && it.done
+                  ? `<button class="quick-done" title="החזר לפתוח" onclick="event.stopPropagation(); reopenTask('${esc(it.id)}')">↩</button>`
+                  : ''));
+
+        return `<div class="card ${it.unread ? 'unread' : ''}" onclick="${onCardClick}">
+          <div class="card-row">
+            <div class="avatar ${avCls}">${esc(initials(it.author))}</div>
+            <div class="card-main">
+              <div class="card-top">
+                <div class="author">${esc(it.author)}</div>
+                <div class="meta-time">${esc(it.time || '')}</div>
+              </div>
+              <div class="card-title">${esc(it.title)}</div>
+              ${it.snippet ? `<div class="card-snippet">${esc(it.snippet)}</div>` : ''}
+              <div class="badges">
+                <span class="pill ${actorCls}">${esc(it.actor)}</span>
+                ${it.category && it.category !== 'מייל' ? `<span class="pill ${it.category==='עבודה'?'p-work':'p-pers'}">${esc(it.category)}</span>` : ''}
+              </div>
             </div>
-          </div>
-          <div class="post-title">${esc(t.title)}</div>
-          ${t.details ? `<div class="post-body">${esc(t.details).slice(0,220)}</div>` : ''}
-          <div class="action-bar" onclick="event.stopPropagation()">
-            <button class="btn btn-grad" onclick="openActionFromTask(${idx})">⚡ בצע / ענה</button>
-            ${done ? `<button class="btn" onclick="setTaskStatus('${esc(t.id)}','פתוח')">↩️ החזר</button>`
-                   : `<button class="btn btn-ok" onclick="setTaskStatus('${esc(t.id)}','בוצע')">✓ בוצע</button>`}
-            ${!t.calEventId ? `<button class="btn" onclick="addCal('${esc(t.id)}')">📅 ליומן</button>` : '<span class="pill p-ok">ביומן ✓</span>'}
+            ${quickBtn}
           </div>
         </div>`;
-      }).join('') : '<div class="empty">אין משימות בתצוגה זו</div>';
+      }).join('');
     }
 
-    function setTaskStatus(id, st) {
-      const item = (STATE && STATE.tasks || []).find(t => t.id === id);
-      if (item) { item.status = st; renderHome(); renderStories(); }
-      toast('עודכן ✓');
-      callServer('apiUpdateTaskStatus', [PIN, id, st]).then(() => {
-        try { localStorage.setItem('cc_state_cache_v4', JSON.stringify(STATE)); } catch (e) {}
-      }).catch(e => { toast('שגיאה: ' + e.message); loadAll(); });
+    // === INSTANT COMPLETE + 6-SECOND UNDO ===
+    function quickDoneTask(id) {
+      const t = (STATE && STATE.tasks || []).find(x => x.id === id);
+      if (!t) return;
+      t.status = 'בוצע';
+      renderHome();
+      toast('המשימה סומנה כבוצעה', () => reopenTask(id));
+      callServer('apiUpdateTaskStatus', [PIN, id, 'בוצע', LAST_GEO]).then(saveCache).catch(e => { toast(e.message); loadAll(); });
     }
 
-    function addCal(id) {
-      toast('מוסיף ליומן...');
-      callServer('apiAddTaskToCalendar', [PIN, id]).then(() => {
-        const item = (STATE && STATE.tasks || []).find(t => t.id === id);
-        if (item) { item.calEventId = 'ok'; renderHome(); }
-        toast('נוסף ליומן Google ✓');
-      }).catch(e => toast(e.message));
+    function reopenTask(id) {
+      const t = (STATE && STATE.tasks || []).find(x => x.id === id);
+      if (!t) return;
+      t.status = 'פתוח';
+      renderHome();
+      toast('המשימה הוחזרה לפתוח ↩️');
+      callServer('apiUpdateTaskStatus', [PIN, id, 'פתוח', LAST_GEO]).then(saveCache).catch(e => { toast(e.message); loadAll(); });
     }
 
-    function saveNewTask(executeNow) {
-      const title = document.getElementById('ntTitle').value.trim();
-      if (!title) return toast('יש להזין כותרת');
-      const payload = {
-        title: title, category: document.getElementById('ntCat').value,
-        contact: document.getElementById('ntContact').value.trim() || 'ידני',
-        dueDate: document.getElementById('ntDate').value, dueTime: document.getElementById('ntTime').value,
-        details: document.getElementById('ntDetails').value.trim()
-      };
-      closeModal('addTaskModal'); toast('שומר משימה...');
-      callServer('apiAddManualTask', [PIN, payload]).then(res => {
-        const newObj = Object.assign({ id: res.id, status: 'פתוח', calEventId: '', project: '', assignee: 'אני' }, payload);
-        if (STATE && STATE.tasks) STATE.tasks.unshift(newObj);
-        document.getElementById('ntTitle').value = ''; document.getElementById('ntDetails').value = '';
-        renderHome(); renderStories();
-        toast('המשימה נשמרה ✓');
-        if (executeNow) {
-          ACTION_MODE = 'task'; ACTION_LIST = [newObj]; ACTION_IDX = 0;
-          loadActionModalItem('wa', NT_SELECTED.phone, NT_SELECTED.email);
-          openModal('actionModal');
-        }
-        NT_SELECTED = { phone: '', email: '' };
-      }).catch(e => toast(e.message));
+    function quickMarkFeedRead(id) {
+      const h = (STATE && STATE.history || []).find(x => x.id === id);
+      if (!h) return;
+      h.status = 'נקרא';
+      renderHome();
+      toast('הוסר מפיד השיחות', () => { h.status = 'חדש'; renderHome(); });
+      callServer('apiMarkFeedRead', [PIN, id]).then(saveCache).catch(e => toast(e.message));
     }
 
-    // === UNIFIED CONTACT PICKER (Live search across 4,198 contacts!) ===
-    function liveSearchPicker(inputId, boxId, target) {
-      const q = document.getElementById(inputId).value.trim();
-      const box = document.getElementById(boxId);
-      if (q.length < 2) { box.classList.add('hidden'); return; }
-      clearTimeout(PICKER_TIMER);
-      PICKER_TIMER = setTimeout(() => {
-        // חיפוש מיידי בקיים + השלמה מהשרת (TextFinder)
-        callServer('apiSearchContacts', [PIN, q]).then(list => {
-          if (!list || !list.length) {
-            box.innerHTML = '<div class="picker-row" style="color:var(--muted);">לא נמצאו אנשי קשר תואמים</div>';
-            box.classList.remove('hidden'); return;
-          }
-          box.innerHTML = list.slice(0, 8).map(c => `<div class="picker-row" onclick="pickContact('${target}','${esc(c.name)}','${esc(c.phone)}','${esc(c.email)}','${boxId}')">
-            <div><b>${esc(c.name)}</b><div style="font-size:11px;color:var(--muted);">${esc(c.projects || '')}</div></div>
-            <div style="font-size:11px;color:var(--blue);text-align:left;" dir="ltr">${esc(c.phone || '')}${c.email ? '<br>' + esc(c.email.split(',')[0]) : ''}</div>
-          </div>`).join('');
-          box.classList.remove('hidden');
-        }).catch(() => {});
-      }, 250);
-    }
+    function saveCache() { try { localStorage.setItem('cc_state_cache_v5', JSON.stringify(STATE)); } catch (e) {} }
 
-    function pickContact(target, name, phone, email, boxId) {
-      document.getElementById(boxId).classList.add('hidden');
-      const cleanEmail = (email || '').split(',')[0].trim();
-      if (target === 'nt') {
-        document.getElementById('ntContact').value = name;
-        NT_SELECTED = { phone: phone || '', email: cleanEmail };
-      } else {
-        document.getElementById('actContactSearch').value = name;
-        if (phone) document.getElementById('actPhone').value = phone;
-        if (cleanEmail) document.getElementById('actEmail').value = cleanEmail;
-        if (ACTION_LIST[ACTION_IDX]) ACTION_LIST[ACTION_IDX]._pickedName = name;
-        toast('נבחר: ' + name);
-      }
-    }
-
-    // === UNIFIED ACTION & TRIAGE MODAL (Tasks & Feed) ===
-    function openActionFromTask(idx, defaultChan) {
-      ACTION_MODE = 'task';
-      ACTION_LIST = getFilteredTasks().slice();
-      ACTION_IDX = idx;
-      loadActionModalItem(defaultChan || 'wa');
+    // === UNIFIED ACTION DRAWER (All Channels + Mute + Calendar Invite + Auto-Advance) ===
+    function openUnifiedItem(idx) {
+      const all = buildUnifiedList(HOME_VIEW).filter(x => x.kind !== 'mail');
+      const clicked = buildUnifiedList(HOME_VIEW)[idx];
+      if (!clicked || clicked.kind === 'mail') return;
+      ACTION_LIST = all;
+      ACTION_IDX = all.findIndex(x => x.kind === clicked.kind && x.id === clicked.id);
+      if (ACTION_IDX < 0) ACTION_IDX = 0;
+      loadActionDrawer();
       openModal('actionModal');
     }
 
-    function openActionFromFeed(idx, defaultChan) {
-      ACTION_MODE = 'feed';
-      ACTION_LIST = (STATE && STATE.history || []).slice();
-      ACTION_IDX = idx;
-      loadActionModalItem(defaultChan || 'wa');
-      openModal('actionModal');
-    }
-
-    function loadActionModalItem(chan, prePhone, preEmail) {
+    function loadActionDrawer(prePhone, preEmail) {
       if (ACTION_IDX < 0 || ACTION_IDX >= ACTION_LIST.length) {
-        closeModal('actionModal');
-        toast(ACTION_MODE === 'task' ? 'סיימת את כל המשימות! 🎉' : 'סוף הפיד');
-        return;
+        closeModal('actionModal'); toast('סיימת לעבור על הרשימה! 🎉'); return;
       }
-      const it = ACTION_LIST[ACTION_IDX];
-      const isTask = (ACTION_MODE === 'task');
-      document.getElementById('actCounter').textContent = (isTask ? 'משימה ' : 'שיחה ') + (ACTION_IDX + 1) + ' מתוך ' + ACTION_LIST.length;
-      document.getElementById('actTitle').textContent = isTask ? it.title : (it.contact + (it.project ? ' • ' + it.project : ''));
-      document.getElementById('actSub').textContent = isTask ? (it.contact + (it.dueDate ? ' • 📅 ' + it.dueDate : '')) : (it.channel + ' • ' + it.time);
-      document.getElementById('actBody').textContent = isTask ? (it.details || it.title) : it.summary;
-      document.getElementById('actContactSearch').value = it.contact && it.contact !== 'ידני' ? it.contact : '';
+      const item = ACTION_LIST[ACTION_IDX];
+      const r = item.raw;
+      document.getElementById('actCounter').textContent = (ACTION_IDX + 1) + ' מתוך ' + ACTION_LIST.length + ' • ' + item.actor;
+      document.getElementById('actTitle').textContent = item.title;
+      document.getElementById('actSub').textContent = item.author + (item.time ? ' • ' + item.time : '');
+      document.getElementById('actBody').textContent = item.snippet || item.title;
+      document.getElementById('actContactSearch').value = item.author && item.author !== 'ידני' ? item.author : '';
       document.getElementById('actPickerResults').classList.add('hidden');
-      document.getElementById('actPhone').value = prePhone || '';
-      document.getElementById('actEmail').value = preEmail || '';
-      document.getElementById('actSubject').value = isTask ? it.title : ('המשך לשיחה: ' + (it.project || it.contact));
-      document.getElementById('actText').value = '';
-      document.getElementById('actTaskControls').classList.toggle('hidden', !isTask);
-      selectActChannel(chan || 'wa');
+      document.getElementById('actFeedEditBox').classList.add('hidden');
+      document.getElementById('actPhone').value = prePhone || (item.kind === 'approval' && r.channel !== 'Gmail' ? r.target : '');
+      document.getElementById('actEmail').value = preEmail || (item.kind === 'approval' && r.channel === 'Gmail' ? r.target : '');
+      document.getElementById('actSubject').value = (item.kind === 'approval' && r.subject) ? r.subject : item.title;
+      document.getElementById('actText').value = (item.kind === 'approval') ? (r.draft || '') : (item.kind === 'followup' ? ('היי ' + r.contact + ', מה קורה לגבי: ' + r.asked + '?') : '');
 
-      if (!prePhone && !preEmail && it.contact && it.contact !== 'ידני') {
-        callServer('apiLookupContactPhone', [PIN, it.contact]).then(res => {
+      const isWork = (item.category === 'עבודה');
+      selectWaApp(isWork ? 'biz' : 'reg');
+      selectActChannel(item.kind === 'approval' && r.channel === 'Gmail' ? 'mail' : 'wa');
+
+      // Contextual clean footer controls
+      const fb = document.getElementById('actFooterBar');
+      if (item.kind === 'task') {
+        fb.innerHTML = `
+          <button class="btn btn-blue" onclick="completeActiveTaskAndNext()">✓ בוצע ←</button>
+          <button class="btn" onclick="openCalWithGuest()">📅 ליומן + הזמנה</button>
+          <button class="btn" onclick="muteActiveContact('silent')">🔇 השתק</button>
+          <button class="btn btn-err" onclick="muteActiveContact('ignore')">🚫 התעלם</button>
+          <button class="btn btn-err" onclick="deleteActiveItemAndNext()">🗑️</button>`;
+      } else if (item.kind === 'feed') {
+        fb.innerHTML = `
+          <button class="btn btn-blue" onclick="markActiveFeedReadAndNext()">✓ נקרא ←</button>
+          <button class="btn" onclick="toggleFeedEditBox()">✏️ ערוך</button>
+          <button class="btn" onclick="muteActiveContact('silent')">🔇 השתק</button>
+          <button class="btn btn-err" onclick="deleteActiveItemAndNext()">🗑️</button>`;
+      } else if (item.kind === 'followup') {
+        fb.innerHTML = `
+          <button class="btn btn-blue" onclick="closeActiveFollowupAndNext()">✓ התקבלה תשובה ←</button>
+          <button class="btn" onclick="muteActiveContact('silent')">🔇 השתק</button>`;
+      } else if (item.kind === 'approval') {
+        fb.innerHTML = `
+          <button class="btn btn-blue" onclick="approveActiveAndNext('approve')">✓ אשר ובצע ←</button>
+          <button class="btn btn-err" onclick="approveActiveAndNext('reject')">✕ דחה ←</button>`;
+      }
+
+      if (!document.getElementById('actPhone').value && !document.getElementById('actEmail').value && item.author && item.author !== 'ידני') {
+        callServer('apiLookupContactPhone', [PIN, item.author]).then(res => {
           if (!res) return;
           if (res.phone && !document.getElementById('actPhone').value) document.getElementById('actPhone').value = res.phone;
           if (res.email && !document.getElementById('actEmail').value) document.getElementById('actEmail').value = res.email;
@@ -709,28 +677,40 @@
     function stepActionItem(dir) {
       const next = ACTION_IDX + dir;
       if (next < 0 || next >= ACTION_LIST.length) return toast(dir > 0 ? 'זה הפריט האחרון' : 'זה הפריט הראשון');
-      ACTION_IDX = next;
-      loadActionModalItem(ACTIVE_CHAN);
+      ACTION_IDX = next; loadActionDrawer();
+    }
+
+    function selectWaApp(appType) {
+      WA_APP = appType;
+      document.getElementById('wt-biz').classList.toggle('active', appType === 'biz');
+      document.getElementById('wt-reg').classList.toggle('active', appType === 'reg');
+      if (ACTIVE_CHAN === 'wa') document.getElementById('actExecBtn').textContent = appType === 'biz' ? '💼 שלח ב-WA Business' : '🏠 שלח ב-WA רגיל';
     }
 
     function selectActChannel(ch) {
       ACTIVE_CHAN = ch;
-      ['wa','sms','mail','call'].forEach(c => document.getElementById('ct-' + c).classList.toggle('active', c === ch));
+      ['wa','mail','sms','call'].forEach(c => document.getElementById('ct-' + c).classList.toggle('active', c === ch));
+      document.getElementById('actWaTypeWrap').classList.toggle('hidden', ch !== 'wa');
       document.getElementById('actPhoneWrap').classList.toggle('hidden', ch === 'mail');
       document.getElementById('actMailWrap').classList.toggle('hidden', ch !== 'mail');
       document.getElementById('actTextWrap').classList.toggle('hidden', ch === 'call');
       document.getElementById('actAiBtn').classList.toggle('hidden', ch === 'call');
-      const labels = { wa: '📲 פתח ושלח בוואטסאפ', sms: '📱 פתח ושלח SMS', mail: '📨 שלח מייל ישירות', call: '📞 חייג עכשיו' };
+      const labels = { wa: WA_APP === 'biz' ? '💼 שלח ב-WA Business' : '🏠 שלח ב-WA רגיל', mail: '📨 שלח מייל ישירות', sms: '📱 שלח SMS', call: '📞 חייג עכשיו' };
       document.getElementById('actExecBtn').textContent = labels[ch];
     }
 
+    function buildWhatsAppTargetUrl(cleanPh, text, waApp) {
+      const waMe = cleanPh ? ('https://wa.me/' + cleanPh + '?text=' + encodeURIComponent(text)) : ('https://wa.me/?text=' + encodeURIComponent(text));
+      if (!/Android/i.test(navigator.userAgent || '')) return waMe;
+      const pkg = (waApp === 'biz') ? 'com.whatsapp.w4b' : 'com.whatsapp';
+      return 'intent://send?' + (cleanPh ? ('phone=' + cleanPh + '&') : '') + 'text=' + encodeURIComponent(text) + '#Intent;scheme=whatsapp;package=' + pkg + ';S.browser_fallback_url=' + encodeURIComponent(waMe) + ';end';
+    }
+
     function draftActionWithAi() {
-      const it = ACTION_LIST[ACTION_IDX];
-      if (!it) return;
-      const contact = document.getElementById('actContactSearch').value.trim() || it.contact;
-      const summary = ACTION_MODE === 'task' ? (it.title + '\n' + (it.details || '')) : it.summary;
-      toast('מנסח תשובה עם AI...');
-      callServer('apiDraftAiWaReply', [PIN, contact, ACTIVE_CHAN === 'mail' ? 'Gmail' : 'WhatsApp', summary]).then(res => {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it) return;
+      const contact = document.getElementById('actContactSearch').value.trim() || it.author;
+      toast('מנסח עם AI...');
+      callServer('apiDraftAiWaReply', [PIN, contact, ACTIVE_CHAN === 'mail' ? 'Gmail' : 'WhatsApp', it.title + '\n' + (it.snippet || '')]).then(res => {
         document.getElementById('actText').value = res.draft || '';
         if (res.phone && !document.getElementById('actPhone').value) document.getElementById('actPhone').value = res.phone;
         toast('הטיוטה מוכנה ✓');
@@ -739,123 +719,202 @@
 
     function executeActionChannel() {
       const it = ACTION_LIST[ACTION_IDX];
-      const contact = document.getElementById('actContactSearch').value.trim() || (it && it.contact) || '';
+      const contact = document.getElementById('actContactSearch').value.trim() || (it && it.author) || '';
       const phone = document.getElementById('actPhone').value.trim();
       const cleanPh = phone.replace(/[^\d]/g, '').replace(/^0/, '972');
       const text = document.getElementById('actText').value.trim();
 
       if (ACTIVE_CHAN === 'call') {
-        if (!phone) return toast('חפש איש קשר או הזן טלפון לחיוג');
-        window.location.href = 'tel:' + phone.replace(/[^\d+]/g, '');
-        return;
+        if (!phone) return toast('בחר איש קשר או הזן טלפון');
+        window.location.href = 'tel:' + phone.replace(/[^\d+]/g, ''); return;
       }
       if (ACTIVE_CHAN === 'mail') {
-        const email = document.getElementById('actEmail').value.trim();
-        const subject = document.getElementById('actSubject').value.trim();
-        if (!email || email.indexOf('@') === -1) return toast('חפש איש קשר או הזן כתובת מייל תקינה');
-        if (!text) return toast('כתוב תוכן למייל לפני השליחה');
-        toast('שולח מייל ישירות מ-Gmail...');
-        callServer('apiSendDirectEmail', [PIN, email, subject, text, contact, it && it.category, it && it.project]).then(() => {
-          toast('המייל נשלח בהצלחה ✓');
-          if (ACTION_MODE === 'task') completeActiveTaskAndNext();
-        }).catch(e => toast('שגיאה: ' + e.message));
+        const email = document.getElementById('actEmail').value.trim(), subject = document.getElementById('actSubject').value.trim();
+        if (!email || email.indexOf('@') === -1) return toast('הזן או בחר כתובת מייל');
+        if (!text) return toast('כתוב תוכן למייל');
+        toast('שולח מייל...');
+        callServer('apiSendDirectEmail', [PIN, email, subject, text, contact, it && it.category, it && it.raw && it.raw.project, LAST_GEO]).then(() => {
+          toast('המייל נשלח ותועד ✓');
+          if (it && it.kind === 'task') completeActiveTaskAndNext();
+        }).catch(e => toast(e.message));
         return;
       }
       if (!text) return toast('כתוב הודעה לפני השליחה');
       if (ACTIVE_CHAN === 'sms') {
-        if (!phone) return toast('חפש איש קשר או הזן מספר ל-SMS');
+        if (!phone) return toast('בחר איש קשר או הזן טלפון');
         window.location.href = 'sms:' + phone.replace(/[^\d+]/g, '') + '?body=' + encodeURIComponent(text);
         toast('נפתח ב-SMS ותועד ✓');
-        callServer('apiLogWaReply', [PIN, contact, phone, 'SMS', text, it && it.category, it && it.project]).catch(() => {});
+        callServer('apiLogWaReply', [PIN, contact, phone, 'SMS', text, it && it.category, it && it.raw && it.raw.project, LAST_GEO]).catch(() => {});
         return;
       }
-      // WhatsApp
-      const waUrl = cleanPh ? ('https://wa.me/' + cleanPh + '?text=' + encodeURIComponent(text)) : ('https://wa.me/?text=' + encodeURIComponent(text));
-      window.open(waUrl, '_blank');
-      toast('נפתח בוואטסאפ ותועד ✓');
-      callServer('apiLogWaReply', [PIN, contact, phone, (it && it.category === 'עבודה') ? 'WhatsApp Business' : 'WhatsApp', text, it && it.category, it && it.project]).catch(() => {});
+      const url = buildWhatsAppTargetUrl(cleanPh, text, WA_APP);
+      if (url.indexOf('intent://') === 0) window.location.href = url; else window.open(url, '_blank');
+      const chLbl = WA_APP === 'biz' ? 'WhatsApp Business' : 'WhatsApp רגיל';
+      toast('נפתח ב-' + chLbl + ' ותועד ✓');
+      callServer('apiLogWaReply', [PIN, contact, phone, chLbl, text, it && it.category, it && it.raw && it.raw.project, LAST_GEO]).catch(() => {});
     }
 
-    function completeActiveTaskAndNext() {
-      const it = ACTION_LIST[ACTION_IDX];
-      if (!it) return;
-      const orig = (STATE && STATE.tasks || []).find(t => t.id === it.id);
-      if (orig) orig.status = 'בוצע';
-      ACTION_LIST.splice(ACTION_IDX, 1);
-      if (ACTION_IDX >= ACTION_LIST.length) ACTION_IDX = ACTION_LIST.length - 1;
-      renderHome(); renderStories();
-      toast('משימה הושלמה ✓');
-      callServer('apiUpdateTaskStatus', [PIN, it.id, 'בוצע']).then(() => {
-        try { localStorage.setItem('cc_state_cache_v4', JSON.stringify(STATE)); } catch (e) {}
-      }).catch(e => toast('שגיאה בעדכון: ' + e.message));
-      if (ACTION_LIST.length) loadActionModalItem('wa');
-      else { closeModal('actionModal'); toast('סיימת את כל המשימות הפתוחות! 🎉'); }
+    function openCalWithGuest() {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it || it.kind !== 'task') return;
+      toast('יוצר אירוע ומצרף אורח...');
+      callServer('apiAddTaskToCalendar', [PIN, it.id, LAST_GEO]).then(res => {
+        if (it.raw) it.raw.calEventId = 'ok';
+        toast(res.invitedEmail ? ('נוצר ביומן עם הזמנה ל-' + res.invitedEmail) : 'נוצר ביומן — נפתח להשלמת פרטים');
+        if (res && res.calUrl) window.open(res.calUrl, '_blank');
+      }).catch(e => toast(e.message));
     }
 
-    function deleteActiveTaskAndNext() {
-      const it = ACTION_LIST[ACTION_IDX];
-      if (!it) return;
-      if (STATE && STATE.tasks) STATE.tasks = STATE.tasks.filter(t => t.id !== it.id);
+    function muteActiveContact(modeType) {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it) return;
+      const name = document.getElementById('actContactSearch').value.trim() || it.author;
+      toast('מעדכן השתקה...');
+      callServer('apiMuteContactByName', [PIN, name, modeType, LAST_GEO]).then(res => {
+        toast((res && res.message) || 'עודכן ✓');
+      }).catch(e => toast(e.message));
+    }
+
+    function advanceAfterRemoval() {
       ACTION_LIST.splice(ACTION_IDX, 1);
       if (ACTION_IDX >= ACTION_LIST.length) ACTION_IDX = ACTION_LIST.length - 1;
-      renderHome(); renderStories();
-      toast('המשימה נמחקה ✓');
-      callServer('apiDeleteTask', [PIN, it.id]).catch(e => toast(e.message));
-      if (ACTION_LIST.length) loadActionModalItem('wa');
+      renderHome();
+      if (ACTION_LIST.length) loadActionDrawer();
       else closeModal('actionModal');
     }
 
-    function addActiveTaskToCal() {
-      const it = ACTION_LIST[ACTION_IDX];
-      if (it) addCal(it.id);
+    function completeActiveTaskAndNext() {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it) return;
+      const id = it.id;
+      if (it.raw) it.raw.status = 'בוצע';
+      advanceAfterRemoval();
+      toast('המשימה הושלמה ✓', () => reopenTask(id));
+      callServer('apiUpdateTaskStatus', [PIN, id, 'בוצע', LAST_GEO]).then(saveCache).catch(e => toast(e.message));
     }
 
-    // === GMAIL TAB WITH AUTO-ADVANCE TRIAGE ===
-    function filterMail(q, el) {
-      MAIL_QUERY = q;
-      document.querySelectorAll('#tab-mail .chip').forEach(c => c.classList.remove('active'));
-      if (el) el.classList.add('active');
-      document.getElementById('mailSearch').value = '';
-      loadEmails();
+    function markActiveFeedReadAndNext() {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it) return;
+      const id = it.id, orig = it.raw;
+      if (orig) orig.status = 'נקרא';
+      advanceAfterRemoval();
+      toast('סומן כנקרא ✓', () => { if (orig) orig.status = 'חדש'; renderHome(); });
+      callServer('apiMarkFeedRead', [PIN, id]).then(saveCache).catch(e => toast(e.message));
     }
 
-    function loadEmails() {
-      const customQ = document.getElementById('mailSearch').value.trim();
-      document.getElementById('mailList').innerHTML = '<div class="empty">טוען מיילים מ-Gmail...</div>';
+    function closeActiveFollowupAndNext() {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it) return;
+      if (it.raw) it.raw.status = 'התקבלה תשובה';
+      advanceAfterRemoval();
+      toast('המעקב נסגר ✓');
+      callServer('apiUpdateFollowupStatus', [PIN, it.id, 'התקבלה תשובה']).then(saveCache).catch(e => toast(e.message));
+    }
+
+    function approveActiveAndNext(action) {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it) return;
+      const id = it.id, body = document.getElementById('actText').value, subj = document.getElementById('actSubject').value;
+      if (it.raw) it.raw.status = action === 'approve' ? 'אושר ונשלח' : 'נדחה';
+      advanceAfterRemoval();
+      toast(action === 'approve' ? 'אושר ובוצע ✓' : 'נדחה');
+      callServer('apiHandleApproval', [PIN, id, action, body, subj]).then(res => {
+        if (res && res.openUrl) window.open(res.openUrl, '_blank');
+        saveCache();
+      }).catch(e => toast(e.message));
+    }
+
+    function deleteActiveItemAndNext() {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it) return;
+      const id = it.id, kind = it.kind;
+      if (kind === 'task' && STATE.tasks) STATE.tasks = STATE.tasks.filter(x => x.id !== id);
+      if (kind === 'feed' && STATE.history) STATE.history = STATE.history.filter(x => x.id !== id);
+      advanceAfterRemoval();
+      toast('נמחק ✓');
+      callServer(kind === 'task' ? 'apiDeleteTask' : 'apiDeleteFeedItem', [PIN, id]).then(saveCache).catch(e => toast(e.message));
+    }
+
+    function toggleFeedEditBox() {
+      const box = document.getElementById('actFeedEditBox');
+      const show = box.classList.contains('hidden');
+      box.classList.toggle('hidden', !show);
+      if (show && ACTION_LIST[ACTION_IDX]) {
+        const r = ACTION_LIST[ACTION_IDX].raw;
+        document.getElementById('feContact').value = r.contact || '';
+        document.getElementById('feProject').value = r.project || '';
+        document.getElementById('feSummary').value = r.summary || '';
+      }
+    }
+
+    function saveActiveFeedEdit() {
+      const it = ACTION_LIST[ACTION_IDX]; if (!it) return;
+      const nc = document.getElementById('feContact').value.trim(), np = document.getElementById('feProject').value.trim(), ns = document.getElementById('feSummary').value.trim();
+      it.raw.contact = nc; it.raw.project = np; it.raw.summary = ns;
+      it.author = nc; it.snippet = ns;
+      document.getElementById('actFeedEditBox').classList.add('hidden');
+      document.getElementById('actBody').textContent = ns;
+      renderHome(); toast('נשמר ✓');
+      callServer('apiEditFeedItem', [PIN, it.id, nc, np, ns]).then(saveCache).catch(e => toast(e.message));
+    }
+
+    // === ADD TASK + LIVE CONTACT PICKER ===
+    function saveNewTask(executeNow) {
+      const title = document.getElementById('ntTitle').value.trim();
+      if (!title) return toast('הזן כותרת');
+      const payload = { title: title, category: document.getElementById('ntCat').value, contact: document.getElementById('ntContact').value.trim() || 'ידני', dueDate: document.getElementById('ntDate').value, dueTime: document.getElementById('ntTime').value, details: document.getElementById('ntDetails').value.trim() };
+      closeModal('addTaskModal'); toast('שומר...');
+      callServer('apiAddManualTask', [PIN, payload]).then(res => {
+        const obj = Object.assign({ id: res.id, status: 'פתוח', calEventId: '', project: '', assignee: 'אני' }, payload);
+        if (STATE && STATE.tasks) STATE.tasks.unshift(obj);
+        document.getElementById('ntTitle').value = ''; document.getElementById('ntDetails').value = '';
+        renderHome(); toast('המשימה נשמרה ✓');
+        if (executeNow) {
+          ACTION_LIST = [{ kind: 'task', raw: obj, id: obj.id, author: obj.contact, title: obj.title, snippet: obj.details, time: obj.dueDate, category: obj.category, actor: '👤 אני' }];
+          ACTION_IDX = 0; loadActionDrawer(NT_SELECTED.phone, NT_SELECTED.email); openModal('actionModal');
+        }
+        NT_SELECTED = { phone: '', email: '' };
+      }).catch(e => toast(e.message));
+    }
+
+    function liveSearchPicker(inputId, boxId, target) {
+      const q = document.getElementById(inputId).value.trim(), box = document.getElementById(boxId);
+      if (q.length < 2) { box.classList.add('hidden'); return; }
+      clearTimeout(PICKER_TIMER);
+      PICKER_TIMER = setTimeout(() => {
+        callServer('apiSearchContacts', [PIN, q]).then(list => {
+          if (!list || !list.length) { box.innerHTML = '<div class="picker-row" style="color:var(--muted);">לא נמצאו תוצאות</div>'; box.classList.remove('hidden'); return; }
+          box.innerHTML = list.slice(0, 7).map(c => `<div class="picker-row" onclick="pickContact('${target}','${esc(c.name)}','${esc(c.phone)}','${esc(c.email)}','${boxId}')">
+            <div><b>${esc(c.name)}</b><div style="font-size:11px;color:var(--muted);">${esc(c.projects || '')}</div></div>
+            <div style="font-size:11px;color:var(--blue);text-align:left;" dir="ltr">${esc(c.phone || '')}${c.email ? '<br>' + esc(c.email.split(',')[0]) : ''}</div>
+          </div>`).join('');
+          box.classList.remove('hidden');
+        }).catch(() => {});
+      }, 240);
+    }
+
+    function pickContact(target, name, phone, email, boxId) {
+      document.getElementById(boxId).classList.add('hidden');
+      const em = (email || '').split(',')[0].trim();
+      if (target === 'nt') { document.getElementById('ntContact').value = name; NT_SELECTED = { phone: phone || '', email: em }; }
+      else {
+        document.getElementById('actContactSearch').value = name;
+        if (phone) document.getElementById('actPhone').value = phone;
+        if (em) document.getElementById('actEmail').value = em;
+        toast('נבחר: ' + name);
+      }
+    }
+
+    // === EMAILS (Integrated into Unified Inbox + Auto-Advance + Categorize Leaves Inbox) ===
+    function loadEmails(silent) {
+      const customQ = document.getElementById('mailSearch') ? document.getElementById('mailSearch').value.trim() : '';
+      if (!silent && HOME_VIEW === 'mail') document.getElementById('homeList').innerHTML = '<div class="empty">טוען מיילים...</div>';
       callServer('apiGetEmails', [PIN, customQ || MAIL_QUERY, 12]).then(res => {
         if (Array.isArray(res)) EMAILS = res;
         else {
           EMAILS = (res && res.emails) ? res.emails : [];
-          if (res && res.allLabels && res.allLabels.length && STATE) {
-            STATE.gmailLabels = res.allLabels;
-            renderEmailLabelOptions(); renderMailFilterDropdown();
-          }
+          if (res && res.allLabels && res.allLabels.length && STATE) { STATE.gmailLabels = res.allLabels; renderEmailLabelOptions(); renderMailFilterDropdown(); }
         }
-        renderEmails();
-      }).catch(e => toast('שגיאת מייל: ' + e.message));
-    }
-
-    function renderEmails() {
-      const box = document.getElementById('mailList');
-      box.innerHTML = EMAILS.length ? EMAILS.map((m, idx) => `<div class="card ${m.unread?'unread':''}" onclick="openEmail(${idx})" style="cursor:pointer;">
-        <div class="post-hdr">
-          <div class="avatar av-mail">${esc(initials(m.senderName))}</div>
-          <div class="post-meta">
-            <div class="post-author">${esc(m.senderName)}</div>
-            <div class="post-sub"><span>${esc(m.date)}</span>${m.labels.map(l=>`<span class="pill p-work">${esc(l)}</span>`).join('')}</div>
-          </div>
-        </div>
-        <div class="post-title">${esc(m.subject)}</div>
-        <div class="post-body" style="color:var(--muted);">${esc(m.snippet)}...</div>
-      </div>`).join('') : '<div class="empty">דואר נכנס נקי! 🎉</div>';
+        renderHome();
+      }).catch(e => { if (!silent) toast('שגיאת מייל: ' + e.message); });
     }
 
     function openEmail(idx) {
-      if (idx < 0 || idx >= EMAILS.length) {
-        closeModal('emailModal');
-        toast('סיימת לעבור על כל המיילים! 🎉');
-        return;
-      }
+      if (idx < 0 || idx >= EMAILS.length) { closeModal('emailModal'); toast('סיימת לעבור על כל המיילים! 🎉'); return; }
       EMAIL_IDX = idx;
       const m = EMAILS[EMAIL_IDX];
       document.getElementById('emCounter').textContent = 'מייל ' + (EMAIL_IDX + 1) + ' מתוך ' + EMAILS.length;
@@ -873,224 +932,107 @@
       openModal('emailModal');
     }
 
-    function stepEmail(dir) {
-      const next = EMAIL_IDX + dir;
-      if (next < 0 || next >= EMAILS.length) return toast(dir > 0 ? 'זה המייל האחרון ברשימה' : 'זה המייל הראשון');
-      openEmail(next);
-    }
-
+    function stepEmail(dir) { const n = EMAIL_IDX + dir; if (n < 0 || n >= EMAILS.length) return toast(dir > 0 ? 'זה המייל האחרון' : 'זה המייל הראשון'); openEmail(n); }
     function removeActiveEmailAndAdvance() {
-      EMAILS.splice(EMAIL_IDX, 1);
-      renderEmails();
-      if (!EMAILS.length) { closeModal('emailModal'); toast('סיימת לעבור על כל המיילים! 🎉'); return; }
+      EMAILS.splice(EMAIL_IDX, 1); renderHome();
+      if (!EMAILS.length) { closeModal('emailModal'); toast('דואר נכנס נקי! 🎉'); return; }
       if (EMAIL_IDX >= EMAILS.length) EMAIL_IDX = EMAILS.length - 1;
       openEmail(EMAIL_IDX);
     }
 
     function renderEmailLabelOptions() {
-      const sel = document.getElementById('emCatSelect');
-      if (!sel) return;
+      const sel = document.getElementById('emCatSelect'); if (!sel) return;
       const all = (STATE && STATE.gmailLabels) ? STATE.gmailLabels : [];
-      const q = (document.getElementById('emCatFilter') ? document.getElementById('emCatFilter').value : '').trim();
-      const qLow = q.toLowerCase();
+      const q = (document.getElementById('emCatFilter') ? document.getElementById('emCatFilter').value : '').trim(), qLow = q.toLowerCase();
       const filtered = q ? all.filter(l => l.toLowerCase().indexOf(qLow) !== -1) : all;
       let html = filtered.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
-      if (q && !all.some(l => l.toLowerCase() === qLow)) html += `<option value="${esc(q)}">+ צור תווית חדשה: ${esc(q)}</option>`;
-      if (!html) html = '<option value="">לא נמצאו תוויות — הקלד שם ליצירה</option>';
-      sel.innerHTML = html;
+      if (q && !all.some(l => l.toLowerCase() === qLow)) html += `<option value="${esc(q)}">+ צור תווית: ${esc(q)}</option>`;
+      sel.innerHTML = html || '<option value="">הקלד שם תווית</option>';
     }
 
     function renderMailFilterDropdown() {
-      const sel = document.getElementById('mailLabelFilter');
-      if (!sel) return;
+      const sel = document.getElementById('mailLabelFilter'); if (!sel) return;
       const all = (STATE && STATE.gmailLabels) ? STATE.gmailLabels : [];
-      sel.innerHTML = '<option value="">📂 סנן לפי כל תווית קיימת ב-Gmail (' + all.length + ')...</option>' +
-        all.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
+      sel.innerHTML = '<option value="in:inbox">📥 דואר נכנס (' + all.length + ' תוויות זמינות)</option>' + all.map(l => `<option value='label:"${esc(l)}"'>📂 ${esc(l)}</option>`).join('');
     }
-
-    function filterMailByDropdown(lbl) {
-      if (!lbl) return;
-      MAIL_QUERY = 'label:"' + lbl.replace(/"/g, '') + '"';
-      document.querySelectorAll('#tab-mail .chip').forEach(c => c.classList.remove('active'));
-      document.getElementById('mailSearch').value = '';
-      loadEmails();
-    }
-
-    function draftEmailWithAi() {
-      const m = EMAILS[EMAIL_IDX];
-      if (!m) return;
-      toast('מנסח תשובה לפי אפיון השולח...');
-      callServer('apiDraftAiEmailReply', [PIN, m.threadId]).then(r => {
-        document.getElementById('emReplyText').value = r.draft || '';
-        toast('טיוטה מוכנה ✓');
-      }).catch(e => toast(e.message));
-    }
-
-    function sendEmailReply() {
-      const m = EMAILS[EMAIL_IDX];
-      const body = document.getElementById('emReplyText').value.trim();
-      if (!m || !body) return toast('כתוב תשובה לפני השליחה');
-      const tid = m.threadId;
-      toast('נשלח ✓ עובר למייל הבא...');
-      removeActiveEmailAndAdvance();
-      callServer('apiReplyEmail', [PIN, tid, body, false]).catch(e => toast('שגיאת שליחה: ' + e.message));
-    }
-
-    function saveEmailDraft() {
-      const m = EMAILS[EMAIL_IDX];
-      if (!m) return;
-      toast('שומר טיוטה ב-Gmail...');
-      callServer('apiSaveEmailDraft', [PIN, m.threadId, document.getElementById('emReplyText').value]).then(() => toast('הטיוטה נשמרה ✓')).catch(e => toast(e.message));
-    }
-
+    function filterMailByDropdown(q) { if (!q) return; MAIL_QUERY = q; loadEmails(false); }
+    function draftEmailWithAi() { const m = EMAILS[EMAIL_IDX]; if (!m) return; toast('מנסח עם AI...'); callServer('apiDraftAiEmailReply', [PIN, m.threadId]).then(r => { document.getElementById('emReplyText').value = r.draft || ''; toast('מוכן ✓'); }).catch(e => toast(e.message)); }
+    function sendEmailReply() { const m = EMAILS[EMAIL_IDX], body = document.getElementById('emReplyText').value.trim(); if (!m || !body) return toast('כתוב תשובה'); const tid = m.threadId; removeActiveEmailAndAdvance(); toast('נשלח ✓'); callServer('apiReplyEmail', [PIN, tid, body, false, LAST_GEO]).catch(e => toast(e.message)); }
+    function saveEmailDraft() { const m = EMAILS[EMAIL_IDX]; if (!m) return; callServer('apiSaveEmailDraft', [PIN, m.threadId, document.getElementById('emReplyText').value]).then(() => toast('טיוטה נשמרה ✓')).catch(e => toast(e.message)); }
     function applyEmailCategory() {
-      const m = EMAILS[EMAIL_IDX];
-      if (!m) return;
+      const m = EMAILS[EMAIL_IDX]; if (!m) return;
       const cat = (document.getElementById('emCatSelect').value || document.getElementById('emCatFilter').value || '').trim();
-      if (!cat) return toast('בחר או הקלד שם תווית');
-      const tid = m.threadId;
-      toast('שויך ל-' + cat + ' ויצא מהדואר הנכנס ✓');
-      removeActiveEmailAndAdvance();
-      callServer('apiCategorizeEmail', [PIN, tid, cat]).then(res => {
-        if (res && res.allLabels && STATE) { STATE.gmailLabels = res.allLabels; renderEmailLabelOptions(); renderMailFilterDropdown(); }
-      }).catch(e => toast('שגיאה: ' + e.message));
+      if (!cat) return toast('בחר תווית');
+      const tid = m.threadId; removeActiveEmailAndAdvance(); toast('שויך ל-' + cat + ' ויצא מהדואר הנכנס ✓');
+      callServer('apiCategorizeEmail', [PIN, tid, cat]).then(res => { if (res && res.allLabels && STATE) { STATE.gmailLabels = res.allLabels; renderEmailLabelOptions(); renderMailFilterDropdown(); } }).catch(e => toast(e.message));
     }
+    function archiveActiveEmail() { const m = EMAILS[EMAIL_IDX]; if (!m) return; const tid = m.threadId; removeActiveEmailAndAdvance(); toast('בארכיון ✓'); callServer('apiArchiveEmail', [PIN, tid]).catch(e => toast(e.message)); }
+    function deleteActiveEmail() { const m = EMAILS[EMAIL_IDX]; if (!m) return; const tid = m.threadId; removeActiveEmailAndAdvance(); toast('נמחק לאשפה ✓'); callServer('apiDeleteEmail', [PIN, tid]).catch(e => toast(e.message)); }
 
-    function archiveActiveEmail() {
-      const m = EMAILS[EMAIL_IDX];
-      if (!m) return;
-      const tid = m.threadId;
-      toast('הועבר לארכיון ✓');
-      removeActiveEmailAndAdvance();
-      callServer('apiArchiveEmail', [PIN, tid]).catch(e => toast(e.message));
-    }
-
-    function deleteActiveEmail() {
-      const m = EMAILS[EMAIL_IDX];
-      if (!m) return;
-      const tid = m.threadId;
-      toast('נמחק לאשפה ✓');
-      removeActiveEmailAndAdvance();
-      callServer('apiDeleteEmail', [PIN, tid]).catch(e => toast(e.message));
-    }
-
-    // === APPROVALS & SLA ===
-    function renderApprovals() {
-      const aBox = document.getElementById('approvalsList');
-      const pend = (STATE.approvals || []).filter(a => a.status === 'ממתין לאישור');
-      aBox.innerHTML = pend.length ? pend.map(a => `<div class="card">
-        <div class="post-sub" style="margin-bottom:6px;"><span class="pill p-warn">${esc(a.actionType || a.channel)}</span><span>אל: ${esc(a.recipient)}</span></div>
-        ${a.channel === 'Gmail' ? `<input id="sub-${esc(a.id)}" value="${esc(a.subject)}" placeholder="נושא">` : ''}
-        <textarea id="txt-${esc(a.id)}">${esc(a.draft)}</textarea>
-        <div class="action-bar">
-          <button class="btn btn-ok" onclick="actApproval('${esc(a.id)}','approve')">✓ אשר ובצע</button>
-          <button class="btn btn-err" onclick="actApproval('${esc(a.id)}','reject')">✕ דחה</button>
-        </div>
-      </div>`).join('') : '<div class="empty">אין פריטים ממתינים לאישור</div>';
-
-      const fBox = document.getElementById('followupsList');
-      const openF = (STATE.followups || []).filter(f => f.status === 'ממתין לתשובה');
-      fBox.innerHTML = openF.length ? openF.map(f => `<div class="card">
-        <div class="post-sub"><span class="pill p-warn">SLA: ${esc(f.slaDue)}</span>${f.trackType?`<span class="pill p-work">${esc(f.trackType)}</span>`:''}<span>תזכורות: ${esc(f.reminders)}</span></div>
-        <div class="post-title">${esc(f.contact)} — ${esc(f.asked)}</div>
-        <div class="action-bar">
-          <button class="btn btn-blue" onclick="remindFollowup('${esc(f.id)}')">📲 שלח תזכורת</button>
-          <button class="btn btn-ok" onclick="closeFollowup('${esc(f.id)}')">✓ התקבלה תשובה</button>
-        </div>
-      </div>`).join('') : '<div class="empty">אין מעקבים פתוחים מול אחרים</div>';
-    }
-
-    function actApproval(id, action) {
-      const txtEl = document.getElementById('txt-'+id), subEl = document.getElementById('sub-'+id);
-      toast('מבצע...');
-      callServer('apiHandleApproval', [PIN, id, action, txtEl ? txtEl.value : null, subEl ? subEl.value : null]).then(res => {
-        if (res && res.openUrl) window.open(res.openUrl, '_blank');
-        toast(action === 'approve' ? 'בוצע ✓' : 'נדחה'); loadAll();
-      }).catch(e => toast(e.message));
-    }
-    function remindFollowup(id) { callServer('apiBuildFollowupReminder', [PIN, id]).then(r => { if (r.openUrl) window.open(r.openUrl, '_blank'); loadAll(); }).catch(e => toast(e.message)); }
-    function closeFollowup(id) { callServer('apiUpdateFollowupStatus', [PIN, id, 'התקבלה תשובה']).then(() => { toast('נסגר ✓'); loadAll(); }).catch(e => toast(e.message)); }
-
-    // === CRM CONTACT PROFILING ===
+    // === CRM & AI ===
     function searchContacts() {
       const q = document.getElementById('crmSearch').value.trim();
       document.getElementById('crmList').innerHTML = '<div class="empty">מחפש...</div>';
       callServer('apiSearchContacts', [PIN, q]).then(renderContacts).catch(e => toast(e.message));
     }
-
     function renderContacts(list) {
       const box = document.getElementById('crmList');
       box.innerHTML = (list && list.length) ? list.map(c => {
         const isW = c.category === 'עבודה', hasProf = !!c.strategy;
-        return `<div class="card">
-          <div class="post-hdr">
+        return `<div class="card" style="cursor:default;">
+          <div class="card-row">
             <div class="avatar ${isW?'av-work':'av-pers'}">${esc(initials(c.name))}</div>
-            <div class="post-meta">
-              <div class="post-author">${esc(c.name)}</div>
-              <div class="post-sub"><span class="pill ${isW?'p-work':'p-pers'}">${esc(c.category)}</span><span>${esc(c.projects || c.email || c.phone)}</span></div>
+            <div class="card-main">
+              <div class="author">${esc(c.name)}</div>
+              <div class="meta-time">${esc(c.category)} • ${esc(c.projects || c.email || c.phone)}</div>
             </div>
           </div>
           ${hasProf ? `<div class="prof-grid">
-            <div class="prof-item"><div class="prof-lbl">💬 סגנון תקשורת וזמן תגובה</div><div class="prof-val">${esc(c.commStyle)} • ${esc(c.responseTime)}</div></div>
-            <div class="prof-item"><div class="prof-lbl">🤝 מוכנות, שיתוף פעולה וערוץ מועדף</div><div class="prof-val">${esc(c.cooperation)} | ערוץ: ${esc(c.preferredChannel)}</div></div>
-            <div class="prof-item"><div class="prof-lbl">🎯 מנופי הנעה והשפעה על החלטות</div><div class="prof-val">${esc(c.levers)}</div></div>
-            <div class="prof-item highlight"><div class="prof-lbl">${isW?'💰 אסטרטגיית רווחיות ומו"מ':'❤️ אסטרטגיית התנהלות אישית'}</div><div class="prof-val">${esc(c.strategy)}</div></div>
-          </div>` : `<div class="post-sub" style="margin:6px 0;">טרם בוצע אפיון עומק — לחץ למטה לניתוח שיחות, וואטסאפ ומיילים של ${esc(c.name)}.</div>`}
+            <div class="prof-item"><div class="prof-lbl">💬 סגנון וזמן תגובה</div><div class="prof-val">${esc(c.commStyle)} • ${esc(c.responseTime)}</div></div>
+            <div class="prof-item"><div class="prof-lbl">🤝 מוכנות וערוץ מועדף</div><div class="prof-val">${esc(c.cooperation)} | ${esc(c.preferredChannel)}</div></div>
+            <div class="prof-item"><div class="prof-lbl">🎯 מנופי הנעה</div><div class="prof-val">${esc(c.levers)}</div></div>
+            <div class="prof-item highlight"><div class="prof-lbl">${isW?'💰 רווחיות ומו"מ':'❤️ התנהלות אישית'}</div><div class="prof-val">${esc(c.strategy)}</div></div>
+          </div>` : ''}
           <div class="action-bar">
-            <button class="btn btn-grad" onclick="profileContact(${c.rowNum})">🧠 ${hasProf?'עדכן אפיון':'נתח ואפיין עכשיו'}</button>
-            <select style="width:auto;margin:0;padding:5px 10px;font-size:12px;" onchange="changeContactMode(${c.rowNum}, this.value)">
-              <option value="רגיל (סיכום + משימות)" ${c.mode.indexOf('רגיל')!==-1?'selected':''}>מצב: רגיל</option>
-              <option value="שקט (ללא סיכום - לרעיונות בלבד)" ${c.mode.indexOf('שקט')!==-1?'selected':''}>מצב: שקט</option>
-              <option value="התעלם לגמרי" ${c.mode.indexOf('התעלם')!==-1?'selected':''}>מצב: התעלם</option>
+            <button class="btn btn-grad" onclick="profileContact(${c.rowNum})">🧠 ${hasProf?'עדכן אפיון':'אפיין עכשיו'}</button>
+            <select style="width:auto;margin:0;padding:5px 9px;font-size:12px;" onchange="changeContactMode(${c.rowNum}, this.value)">
+              <option value="רגיל (סיכום + משימות)" ${c.mode.indexOf('רגיל')!==-1?'selected':''}>רגיל</option>
+              <option value="שקט (ללא סיכום - לרעיונות בלבד)" ${c.mode.indexOf('שקט')!==-1?'selected':''}>שקט</option>
+              <option value="התעלם לגמרי" ${c.mode.indexOf('התעלם')!==-1?'selected':''}>התעלם</option>
             </select>
           </div>
         </div>`;
       }).join('') : '<div class="empty">לא נמצאו אנשי קשר</div>';
     }
+    function profileContact(rowNum) { toast('מנתח שיחות, מעקבים ומיילים...'); callServer('apiProfileContact', [PIN, rowNum]).then(() => { toast('האפיון נשמר ✓'); searchContacts(); }).catch(e => toast(e.message)); }
+    function changeContactMode(rowNum, mode) { callServer('apiUpdateContactMode', [PIN, rowNum, mode]).then(() => toast('עודכן ✓')).catch(e => toast(e.message)); }
 
-    function profileContact(rowNum) {
-      toast('מנתח שיחות, מעקבים ומיילים...');
-      callServer('apiProfileContact', [PIN, rowNum]).then(() => { toast('האפיון נשמר ✓'); searchContacts(); }).catch(e => toast('שגיאה: ' + e.message));
-    }
-    function changeContactMode(rowNum, mode) { callServer('apiUpdateContactMode', [PIN, rowNum, mode]).then(() => toast('מצב עיבוד עודכן')).catch(e => toast(e.message)); }
-
-    // === AI CHAT & IDEAS ===
     function renderIdeas() {
       const box = document.getElementById('ideasList');
-      const list = (STATE.ideas || []).filter(i => i.status !== 'לא רלוונטי');
-      box.innerHTML = list.length ? list.map(i => `<div class="card">
-        <div class="post-sub"><span class="pill p-warn">${esc(i.type)}</span><span>${esc(i.date)} • ${esc(i.status)}</span></div>
-        <div class="post-title">${esc(i.title)}</div>
-        <div class="post-body">${esc(i.details)}</div>
+      const list = (STATE && STATE.ideas || []).filter(i => i.status !== 'לא רלוונטי');
+      box.innerHTML = list.length ? list.map(i => `<div class="card" style="cursor:default;">
+        <div class="badges"><span class="pill p-other">${esc(i.type)}</span><span class="meta-time">${esc(i.date)}</span></div>
+        <div class="card-title">${esc(i.title)}</div>
+        <div style="font-size:13px;color:#d8dee9;line-height:1.45;">${esc(i.details)}</div>
         <div class="action-bar">
           <button class="btn btn-ok" onclick="setIdea('${esc(i.id)}','מעניין - לטיפול')">⭐ מעניין</button>
           <button class="btn btn-err" onclick="setIdea('${esc(i.id)}','לא רלוונטי')">הסר</button>
         </div>
-      </div>`).join('') : '<div class="empty">לחץ "+ הפק חדשים" לקבלת הצעות מותאמות</div>';
+      </div>`).join('') : '<div class="empty">לחץ "+ הפק חדשים"</div>';
     }
     function setIdea(id, st) { callServer('apiUpdateIdeaStatus', [PIN, id, st]).then(() => { toast('עודכן'); loadAll(); }).catch(e => toast(e.message)); }
-    function generateIdeas() { toast('מפיק 3 רעיונות...'); callServer('apiGenerateIdeasNow', [PIN]).then(() => { toast('נוצרו רעיונות!'); loadAll(); }).catch(e => toast(e.message)); }
-    function renderChat() {
-      const box = document.getElementById('chatBox');
-      box.innerHTML = (STATE.chat || []).map(c => `<div class="msg-u">${esc(c.userMsg)}</div><div class="msg-a">${esc(c.aiReply)}</div>`).join('');
-      box.scrollTop = box.scrollHeight;
-    }
-    function sendChat() {
-      const inp = document.getElementById('chatInput'), msg = inp.value.trim();
-      if (!msg) return;
-      inp.value = ''; toast('חושב...');
-      callServer('apiAskAssistant', [PIN, msg]).then(() => loadAll()).catch(e => toast(e.message));
-    }
+    function generateIdeas() { toast('מפיק רעיונות...'); callServer('apiGenerateIdeasNow', [PIN]).then(() => { toast('נוצרו רעיונות ✓'); loadAll(); }).catch(e => toast(e.message)); }
+    function renderChat() { const box = document.getElementById('chatBox'); box.innerHTML = (STATE && STATE.chat || []).map(c => `<div class="msg-u">${esc(c.userMsg)}</div><div class="msg-a">${esc(c.aiReply)}</div>`).join(''); box.scrollTop = box.scrollHeight; }
+    function sendChat() { const inp = document.getElementById('chatInput'), msg = inp.value.trim(); if (!msg) return; inp.value = ''; toast('חושב...'); callServer('apiAskAssistant', [PIN, msg]).then(() => loadAll()).catch(e => toast(e.message)); }
 
-    // === SETTINGS ===
+    // === SETTINGS & SYSTEM COMMANDS ===
     function renderSettings() {
-      const s = STATE.settings || {};
+      const s = STATE && STATE.settings || {};
+      document.getElementById('setRealtime').checked = (s.whatsappMode !== 'אצווה_15_דקות');
       document.getElementById('setBriefing').checked = !!s.morningBriefingEnabled;
-      document.getElementById('setDailyEmail').checked = !!s.dailyEmailEnabled;
-      document.getElementById('setSyncTasks').checked = !!s.syncGoogleTasks;
       document.getElementById('setAutoCal').checked = !!s.autoCalendar;
+      document.getElementById('setDailyEmail').checked = !!s.dailyEmailEnabled;
       document.getElementById('setIdeas').checked = !!s.proactiveIdeasEnabled;
-      document.getElementById('setWaMode').value = s.whatsappMode || 'אצווה_15_דקות';
       document.getElementById('setSilent').value = s.silentChatsStr || '';
       document.getElementById('setIgnored').value = s.ignoredGroupsStr || '';
       if (!IS_GAS) {
@@ -1101,27 +1043,29 @@
     }
     function saveSettings() {
       if (!IS_GAS) {
-        const u = document.getElementById('setGasUrlEdit').value.trim();
-        const p = document.getElementById('setPinEdit').value.trim();
+        const u = document.getElementById('setGasUrlEdit').value.trim(), p = document.getElementById('setPinEdit').value.trim();
         if (u) { GAS_URL = u; localStorage.setItem('cc_gas_url', u); }
         PIN = p; localStorage.setItem('cc_pin', p);
       }
       toast('שומר...');
       callServer('apiSaveSettings', [PIN, {
+        whatsappMode: document.getElementById('setRealtime').checked ? 'זמן_אמת' : 'אצווה_15_דקות',
         morningBriefingEnabled: document.getElementById('setBriefing').checked,
-        dailyEmailEnabled: document.getElementById('setDailyEmail').checked,
-        syncGoogleTasks: document.getElementById('setSyncTasks').checked,
         autoCalendar: document.getElementById('setAutoCal').checked,
+        dailyEmailEnabled: document.getElementById('setDailyEmail').checked,
+        syncGoogleTasks: false,
         proactiveIdeasEnabled: document.getElementById('setIdeas').checked,
-        whatsappMode: document.getElementById('setWaMode').value,
         silentChatsStr: document.getElementById('setSilent').value.trim(),
         ignoredGroupsStr: document.getElementById('setIgnored').value.trim()
       }]).then(() => { closeModal('settingsModal'); toast('ההגדרות נשמרו ✓'); loadAll(); }).catch(e => toast(e.message));
     }
-    function sendEmailNow() { callServer('apiSendDailyEmailNow', [PIN]).then(r => toast(r.message)).catch(e => toast(e.message)); }
+    function importFromGoogleTasks() { toast('מייבא משימות מ-"מדרגות" ו-"משימות לביצוע"...'); callServer('apiImportGoogleTasks', [PIN]).then(r => { toast((r && r.message) || 'יובא ✓'); closeModal('settingsModal'); loadAll(); }).catch(e => toast(e.message)); }
+    function scheduleSelfReview() { toast('מתזמן סקירה עצמית למחר 04:00...'); callServer('apiScheduleSelfReview4AM', [PIN]).then(r => toast('תוזמן ל-' + (r && r.scheduledFor))).catch(e => toast(e.message)); }
+    function runSheetCmds() { toast('מריץ פקודות מגיליון Sheets...'); callServer('apiRunSheetCommands', [PIN]).then(r => { toast('בוצעו ' + (r && r.executed || 0) + ' פקודות'); loadAll(); }).catch(e => toast(e.message)); }
+    function processCallsNow() { toast('בודק שיחות חדשות בדרייב...'); callServer('apiProcessPendingCallsNow', [PIN]).then(r => { toast((r && r.message) || 'הושלם'); loadAll(); }).catch(e => toast(e.message)); }
 
     hydrateCachedState();
-    loadAll();
+    loadAll(true);
   </script>
 </body>
 </html>
