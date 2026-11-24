@@ -672,7 +672,7 @@
   </nav>
 
   <script>
-    let STATE = null, EMAILS = [], EMAIL_IDX = -1, HOME_VIEW = 'all', MAIL_QUERY = 'in:inbox';
+    let STATE = null, EMAILS = [], EMAIL_IDX = -1, HOME_VIEW = 'all', MAIL_QUERY = 'in:inbox_recent';
     let ACTION_LIST = [], ACTION_IDX = -1, ACTIVE_CHAN = 'wa', WA_APP = 'biz';
     let NT_SELECTED = { phone: '', email: '' }, PICKER_TIMER = null, UNDO_FN = null, TOAST_TIMER = null;
     let LAST_GEO = '';
@@ -723,7 +723,7 @@
     function runLastUndo() { if (UNDO_FN) { const fn = UNDO_FN; UNDO_FN = null; document.getElementById('toast').classList.add('hidden'); fn(); } }
     function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
     function initials(s) { const p = String(s || '?').trim().split(/\s+/); return (p[0][0] || '?') + (p[1] ? p[1][0] : ''); }
-    const APP_VER = '5.4';
+    const APP_VER = '5.5';
     const MODAL_STACK = [];
     let IGNORING_POP = false;
 
@@ -734,7 +734,7 @@
           localStorage.removeItem('cc_state_cache_v4');
           localStorage.removeItem('cc_state_cache_v5');
           localStorage.setItem('cc_app_ver', APP_VER);
-          if ('caches' in window) caches.keys().then(ks => ks.forEach(k => { if (k !== 'cc-pwa-v5-4') caches.delete(k); }));
+          if ('caches' in window) caches.keys().then(ks => ks.forEach(k => { if (k !== 'cc-pwa-v5-5') caches.delete(k); }));
         }
       } catch (e) {}
     })();
@@ -1028,8 +1028,17 @@
       document.getElementById('actBody').textContent = item.snippet || item.title;
       const rawTxt = (r && r.rawSource) ? r.rawSource.trim() : '';
       const srcMeta = (r && r.source) ? r.source : '';
-      document.getElementById('actRawSourceText').textContent = rawTxt || 'הודעה זו עובדה לפני שדרוג שמירת הטקסט הגולמי (החל מהודעות חדשות יוצג כאן הנוסח המלא).';
-      document.getElementById('actSourceMeta').textContent = srcMeta ? ('מקור: ' + srcMeta) : '';
+      let originLabel = 'מקור לא מזוהה';
+      if (srcMeta.indexOf('הורדה |') === 0) originLabel = '📁 קובץ שהורד (' + srcMeta.replace('הורדה |', '').trim() + ')';
+      else if (srcMeta.indexOf('WhatsApp Business') !== -1) originLabel = '💼 WhatsApp Business';
+      else if (srcMeta.indexOf('WhatsApp') !== -1) originLabel = '💬 WhatsApp';
+      else if (srcMeta.indexOf('SMS') !== -1) originLabel = '📱 הודעת SMS';
+      else if (/^Call\s|\.(m4a|amr|wav|mp3|3gp)$/i.test(srcMeta)) originLabel = '📞 הקלטת שיחת טלפון (' + srcMeta + ')';
+      else if (srcMeta.indexOf('Google Tasks') === 0) originLabel = '📋 יובא מ-Google Tasks';
+      else if (srcMeta) originLabel = srcMeta;
+
+      document.getElementById('actRawSourceText').textContent = rawTxt || (srcMeta ? ('אין ציטוט גולמי שמור (פריט זה נוצר לפני v5.5). מקור מדויק: ' + originLabel) : 'אין ציטוט גולמי שמור.');
+      document.getElementById('actSourceMeta').textContent = 'מקור: ' + originLabel;
       document.getElementById('actCorrectBox').classList.add('hidden');
       document.getElementById('actRawSourceBox').classList.toggle('hidden', item.kind === 'custom');
       document.getElementById('actContactSearch').value = item.author && item.author !== 'ידני' ? item.author : '';
@@ -1383,7 +1392,7 @@
     function renderMailFilterDropdown() {
       const sel = document.getElementById('mailLabelFilter'); if (!sel) return;
       const all = (STATE && STATE.gmailLabels) ? STATE.gmailLabels : [];
-      sel.innerHTML = '<option value="in:inbox">📥 דואר נכנס (' + all.length + ' תוויות זמינות)</option>' + all.map(l => `<option value='label:"${esc(l)}"'>📂 ${esc(l)}</option>`).join('');
+      sel.innerHTML = '<option value="in:inbox_recent">📥 דואר נכנס — 14 ימים אחרונים</option><option value="in:inbox">🗄️ כל הדואר הנכנס (כולל ישנים)</option>' + all.map(l => `<option value='label:"${esc(l)}"'>📂 ${esc(l)}</option>`).join('');
     }
     function filterMailByDropdown(q) { if (!q) return; MAIL_QUERY = q; loadEmails(false); }
     function draftEmailWithAi() { const m = EMAILS[EMAIL_IDX]; if (!m) return; toast('מנסח עם AI...'); callServer('apiDraftAiEmailReply', [PIN, m.threadId]).then(r => { document.getElementById('emReplyText').value = r.draft || ''; toast('מוכן ✓'); }).catch(e => toast(e.message)); }

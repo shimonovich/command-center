@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cc-pwa-v5-4';
+const CACHE_NAME = 'cc-pwa-v5-5';
 self.addEventListener('install', e => { self.skipWaiting(); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))));
